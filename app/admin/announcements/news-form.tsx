@@ -34,7 +34,13 @@ const formSchema = z.object({
 });
 
 interface NewsFormProps {
-  initialData?: NewsPostData & { id: string };
+  initialData?: {
+    id: string;
+    title: string;
+    content: string;
+    imageUrl?: string | null;
+    published: boolean;
+  };
 }
 
 export function NewsForm({ initialData }: NewsFormProps) {
@@ -43,11 +49,11 @@ export function NewsForm({ initialData }: NewsFormProps) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData || {
-      title: "",
-      content: "",
-      imageUrl: "",
-      published: false,
+    defaultValues: {
+      title: initialData?.title || "",
+      content: initialData?.content || "",
+      imageUrl: initialData?.imageUrl || "",
+      published: initialData?.published || false,
     },
   });
 
