@@ -30,7 +30,7 @@ const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
   imageUrl: z.string().optional(),
-  published: z.boolean().default(false),
+  published: z.boolean(),
 });
 
 interface NewsFormProps {
@@ -52,7 +52,7 @@ export function NewsForm({ initialData }: NewsFormProps) {
     defaultValues: {
       title: initialData?.title || "",
       content: initialData?.content || "",
-      imageUrl: initialData?.imageUrl || "",
+      imageUrl: initialData?.imageUrl || undefined,
       published: initialData?.published || false,
     },
   });
