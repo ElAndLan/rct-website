@@ -25,28 +25,32 @@ export async function getSiteSettings() {
 export async function updateSiteSettings(formData: FormData) {
   try {
     const logoFile = formData.get("logo") as File;
+    const logoUrlString = formData.get("logoUrl") as string;
+    
+    let finalLogoUrl = logoUrlString;
 
+    // If a new file is uploaded, it takes precedence
     if (logoFile && logoFile.size > 0) {
-      let logoUrl: string;
-
       if (process.env.BLOB_READ_WRITE_TOKEN) {
         // Vercel Blob
         const filename = `logo-${randomUUID()}-${logoFile.name}`;
         const blob = await put(filename, logoFile, { access: "public" });
-        logoUrl = blob.url;
+        finalLogoUrl = blob.url;
       } else {
         // Local
         const buffer = Buffer.from(await logoFile.arrayBuffer());
         const filename = `logo-${randomUUID()}${path.extname(logoFile.name)}`;
         const uploadDir = path.join(process.cwd(), "public", "uploads");
         await writeFile(path.join(uploadDir, filename), buffer);
-        logoUrl = `/uploads/${filename}`;
+        finalLogoUrl = `/uploads/${filename}`;
       }
+    }
 
+    if (finalLogoUrl) {
       await prisma.siteSettings.upsert({
         where: { key: "logoUrl" },
-        update: { value: logoUrl },
-        create: { key: "logoUrl", value: logoUrl },
+        update: { value: finalLogoUrl },
+        create: { key: "logoUrl", value: finalLogoUrl },
       });
     }
 
