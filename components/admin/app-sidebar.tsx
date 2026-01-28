@@ -58,8 +58,8 @@ const items = [
     icon: FileText,
   },
   {
-    title: "News",
-    url: "/admin/news",
+    title: "Announcements",
+    url: "/admin/announcements",
     icon: Megaphone,
   },
   {

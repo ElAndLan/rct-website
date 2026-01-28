@@ -87,6 +87,8 @@ model Show {
   startDate      DateTime?
   endDate        DateTime?
   ticketLink     String?
+  auditionLink   String?    // Link for auditions
+  volunteerLink  String?    // Link for volunteering
   location       String?
   
   // Program Details

@@ -116,41 +116,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Latest News Preview */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Latest News</h2>
-              <p className="text-muted-foreground">
-                Updates from the theatre board and community.
-              </p>
-            </div>
-            <Button variant="outline">View All News</Button>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="group cursor-pointer">
-                <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
-                  <div className="w-full h-full bg-zinc-200 group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="text-sm text-primary font-medium mb-2">
-                  October 15, 2024
-                </div>
-                <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                  Cast Announced for The SpongeBob Musical
-                </h3>
-                <p className="text-muted-foreground line-clamp-2">
-                  We are thrilled to announce the talented cast that will be
-                  bringing Bikini Bottom to life...
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Sponsors Strip */}
       <section className="py-12 bg-zinc-900 text-white">
         <div className="container mx-auto px-4 text-center">

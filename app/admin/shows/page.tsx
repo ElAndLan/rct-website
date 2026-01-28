@@ -98,6 +98,28 @@ export default async function ShowsManagerPage() {
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="auditionLink" className="text-right">
+                    Audition URL
+                  </Label>
+                  <Input
+                    id="auditionLink"
+                    name="auditionLink"
+                    placeholder="https://..."
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="volunteerLink" className="text-right">
+                    Volunteer URL
+                  </Label>
+                  <Input
+                    id="volunteerLink"
+                    name="volunteerLink"
+                    placeholder="https://..."
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="programPdfUrl" className="text-right">
                     Program PDF
                   </Label>

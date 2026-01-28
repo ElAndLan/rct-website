@@ -103,6 +103,8 @@ export async function updateShow(id: string, formData: FormData) {
   const shortDescription = formData.get("shortDescription") as string;
   const status = formData.get("status") as string;
   const ticketLink = formData.get("ticketLink") as string;
+  const auditionLink = formData.get("auditionLink") as string;
+  const volunteerLink = formData.get("volunteerLink") as string;
   const location = formData.get("location") as string;
   const programPdfUrl = formData.get("programPdfUrl") as string;
   const programContent = formData.get("programContent") as string;
@@ -121,6 +123,8 @@ export async function updateShow(id: string, formData: FormData) {
       shortDescription,
       status,
       ticketLink,
+      auditionLink,
+      volunteerLink,
       location,
       programPdfUrl,
       programContent,
