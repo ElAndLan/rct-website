@@ -5,15 +5,52 @@ import { Calendar, Ticket, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { getHeroSlides } from "@/app/actions/hero-slides";
+import { getSiteSettings } from "@/app/actions/settings";
 
 export default async function Home() {
   const { slides } = await getHeroSlides();
+  const settings = await getSiteSettings();
   const activeSlides = slides?.filter((s) => s.isActive) || [];
 
   return (
     <PublicLayout>
       {/* Hero Section */}
       <HeroCarousel slides={activeSlides} />
+
+      {/* Customizable Welcome Section */}
+      {(settings.homeSectionImageUrl || settings.homeSectionTitle) && (
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left: Image */}
+              <div className="relative">
+                {settings.homeSectionImageUrl && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={settings.homeSectionImageUrl}
+                    alt={settings.homeSectionTitle || "Season Image"}
+                    className="w-full rounded-lg shadow-lg object-cover"
+                  />
+                )}
+              </div>
+
+              {/* Right: Content */}
+              <div>
+                {settings.homeSectionTitle && (
+                  <h2 className="text-3xl font-bold mb-6">
+                    {settings.homeSectionTitle}
+                  </h2>
+                )}
+                {settings.homeSectionBody && (
+                  <div className="prose max-w-none text-muted-foreground whitespace-pre-wrap text-lg leading-relaxed">
+                    {settings.homeSectionBody}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Quick Links */}
       <section className="py-16 bg-muted/30">
