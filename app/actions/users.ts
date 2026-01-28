@@ -38,7 +38,7 @@ export async function createUser(formData: FormData) {
   const result = UserSchema.safeParse(rawData);
 
   if (!result.success) {
-    return { success: false, error: result.error.errors[0].message };
+    return { success: false, error: result.error.issues[0].message };
   }
 
   const { name, email, role } = result.data;

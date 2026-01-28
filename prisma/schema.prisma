@@ -157,6 +157,17 @@ model SiteSettings {
   updatedAt DateTime @updatedAt
 }
 
+model ContactSubmission {
+  id            String   @id @default(cuid())
+  name          String
+  contactMethod String   // EMAIL, PHONE, TEXT
+  contactValue  String
+  subject       String
+  message       String
+  createdAt     DateTime @default(now())
+  read          Boolean  @default(false)
+}
+
 // Audition System Models
 
 model AuditionEvent {
