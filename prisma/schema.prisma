@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
+}
+
+// User & Auth Models (NextAuth Compatible)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("USER") // ADMIN, USER
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Content Management Models
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  path      String?
+  order     Int        @default(0)
+  parentId  String?
+  parent    MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuHierarchy")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Show {
+  id             String      @id @default(cuid())
+  title          String
+  slug           String      @unique // for url friendly names
+  description    String?     // Rich text content
+  shortDescription String?   // For cards/carousel
+  imageUrl       String?
+  status         String      @default("UPCOMING") // UPCOMING, CURRENT, PAST
+  startDate      DateTime?
+  endDate        DateTime?
+  ticketLink     String?
+  location       String?
+  
+  // Program Details
+  isProgramActive Boolean    @default(false)
+  programPdfUrl   String?    // Option A: Uploaded PDF URL
+  programContent  String?    // Option B: Digital Program Content
+  
+  cast            CastMember[]
+  photos          ShowPhoto[]
+  
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model CastMember {
+  id        String @id @default(cuid())
+  showId    String
+  show      Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  name      String
+  role      String
+  photoUrl  String?
+  bio       String?
+  order     Int    @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ShowPhoto {
+  id        String @id @default(cuid())
+  showId    String
+  show      Show   @relation(fields: [showId], references: [id], onDelete: Cascade)
+  url       String
+  caption   String?
+  order     Int    @default(0)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NewsPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  imageUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Season Subscription
+model SeasonTier {
+  id        String   @id @default(cuid())
+  name      String   // e.g. "Adult", "Senior", "Student"
+  price     Decimal
+  description String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// Audition System Models
+
+model AuditionEvent {
+  id          String   @id @default(cuid())
+  title       String   // e.g. "SpongeBob Musical Auditions"
+  description String?
+  location    String?
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean  @default(true)
+  
+  slots       AuditionSlot[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditionSlot {
+  id              String   @id @default(cuid())
+  auditionEventId String
+  startTime       DateTime
+  endTime         DateTime
+  capacity        Int      @default(1) // How many people can book this single slot
+  
+  event           AuditionEvent @relation(fields: [auditionEventId], references: [id], onDelete: Cascade)
+  signups         AuditionSignup[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([auditionEventId])
+}
+
+model AuditionSignup {
+  id             String   @id @default(cuid())
+  auditionSlotId String
+  
+  name           String
+  email          String
+  phone          String?
+  notes          String?  // "I can only sing baritone" etc.
+  
+  slot           AuditionSlot @relation(fields: [auditionSlotId], references: [id], onDelete: Cascade)
+  
+  createdAt      DateTime @default(now())
+}
