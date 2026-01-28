@@ -10,51 +10,40 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
-import { Ticket, ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { Show } from "@prisma/client";
+import { HeroSlide } from "@prisma/client";
 
 interface HeroCarouselProps {
-  shows: Partial<Show>[];
+  slides: HeroSlide[];
 }
 
-export function HeroCarousel({ shows = [] }: HeroCarouselProps) {
+export function HeroCarousel({ slides = [] }: HeroCarouselProps) {
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }),
   );
 
-  // Combine real shows with static slides if needed, or just use shows
-  // For now, let's create slides from shows + maybe one generic "Season" slide if empty
+  const hasSlides = slides.length > 0;
 
-  const slides = shows.map((show) => ({
-    id: show.id,
-    title: show.title,
-    description:
-      show.shortDescription || show.description?.substring(0, 150) + "...",
-    image: show.imageUrl,
-    gradient: "bg-gradient-to-br from-zinc-800 to-black",
-    slug: show.slug,
-    ticketLink: show.ticketLink,
-    type: "show",
-  }));
-
-  if (slides.length === 0) {
-    // Fallback slides
-    slides.push({
-      id: "default-1",
-      title: "2025 Season",
-      description:
-        "Experience the magic of live theatre. Join us for an unforgettable season.",
-      image: null,
-      gradient: "bg-gradient-to-br from-red-900 to-rose-950",
-      slug: "",
-      ticketLink: null,
-      type: "generic",
-    });
-  }
-
-  // Always add Auditions slide? Maybe not if not requested. The user said "area where Spongebob is... be a rotating carousel".
-  // I'll stick to shows primarily.
+  // Fallback slide if no slides exist
+  const displaySlides = hasSlides
+    ? slides
+    : [
+        {
+          id: "default-1",
+          title: "Reading Civic Theatre",
+          subtitle: "Experience the magic of live theatre.",
+          imageUrl: "",
+          linkText: "View Season",
+          linkUrl: "/shows",
+          secondaryLinkText: null,
+          secondaryLinkUrl: null,
+          isActive: true,
+          order: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
 
   return (
     <Carousel
@@ -65,19 +54,19 @@ export function HeroCarousel({ shows = [] }: HeroCarouselProps) {
       }}
     >
       <CarouselContent>
-        {slides.map((slide) => (
+        {displaySlides.map((slide) => (
           <CarouselItem key={slide.id}>
             <section className="relative h-[600px] flex items-center justify-center bg-zinc-900 text-white overflow-hidden">
               {/* Background Image */}
               <div className="absolute inset-0 z-0 opacity-40">
-                {slide.image ? (
+                {slide.imageUrl ? (
                   <img
-                    src={slide.image}
-                    alt={slide.title || ""}
+                    src={slide.imageUrl}
+                    alt={slide.title}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className={`w-full h-full ${slide.gradient}`} />
+                  <div className="w-full h-full bg-gradient-to-br from-red-900 to-zinc-950" />
                 )}
               </div>
 
@@ -87,36 +76,36 @@ export function HeroCarousel({ shows = [] }: HeroCarouselProps) {
                   <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white drop-shadow-2xl">
                     {slide.title}
                   </h1>
-                  <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
-                    {slide.description}
-                  </p>
+                  {slide.subtitle && (
+                    <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+                      {slide.subtitle}
+                    </p>
+                  )}
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                    {slide.ticketLink && (
-                      <a
-                        href={slide.ticketLink}
-                        target="_blank"
-                        rel="noreferrer"
+                    {slide.linkText && slide.linkUrl && (
+                      <Button
+                        size="lg"
+                        className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-white border-none shadow-lg"
+                        asChild
                       >
-                        <Button
-                          size="lg"
-                          className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20"
-                        >
-                          <Ticket className="mr-2" /> Buy Tickets
-                        </Button>
-                      </a>
+                        <Link href={slide.linkUrl}>
+                          {slide.linkText}{" "}
+                          <ArrowRight className="ml-2 h-5 w-5" />
+                        </Link>
+                      </Button>
                     )}
-
-                    {slide.type === "show" && slide.slug && (
-                      <Link href={`/shows/${slide.slug}`}>
-                        <Button
-                          size="lg"
-                          variant="outline"
-                          className="text-lg px-8 py-6 bg-white/10 hover:bg-white/20 border-white text-white backdrop-blur-sm"
-                        >
-                          Learn More
-                        </Button>
-                      </Link>
+                    {slide.secondaryLinkText && slide.secondaryLinkUrl && (
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className="text-lg px-8 py-6 bg-white/10 hover:bg-white/20 text-white border-2 border-white/50 backdrop-blur-sm shadow-lg"
+                        asChild
+                      >
+                        <Link href={slide.secondaryLinkUrl}>
+                          {slide.secondaryLinkText}
+                        </Link>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -126,8 +115,11 @@ export function HeroCarousel({ shows = [] }: HeroCarouselProps) {
         ))}
       </CarouselContent>
 
-      <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm" />
-      <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 text-white border-none backdrop-blur-sm" />
+      {/* Navigation Controls */}
+      <div className="hidden group-hover:block transition-opacity duration-300">
+        <CarouselPrevious className="left-4 bg-black/20 hover:bg-black/40 text-white border-white/20" />
+        <CarouselNext className="right-4 bg-black/20 hover:bg-black/40 text-white border-white/20" />
+      </div>
     </Carousel>
   );
 }

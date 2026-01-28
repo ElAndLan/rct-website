@@ -4,18 +4,16 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Ticket, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
-import { getShows } from "@/app/actions/shows";
+import { getHeroSlides } from "@/app/actions/hero-slides";
 
 export default async function Home() {
-  const shows = await getShows();
-  const featuredShows = shows.filter(
-    (s) => s.status === "UPCOMING" || s.status === "CURRENT",
-  );
+  const { slides } = await getHeroSlides();
+  const activeSlides = slides?.filter((s) => s.isActive) || [];
 
   return (
     <PublicLayout>
       {/* Hero Section */}
-      <HeroCarousel shows={featuredShows} />
+      <HeroCarousel slides={activeSlides} />
 
       {/* Quick Links */}
       <section className="py-16 bg-muted/30">

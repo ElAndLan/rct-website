@@ -1,15 +1,15 @@
-
-import { 
-  LayoutDashboard, 
-  CalendarDays, 
-  Users, 
-  FileText, 
-  Settings, 
+import {
+  LayoutDashboard,
+  CalendarDays,
+  Users,
+  FileText,
+  Settings,
   Menu,
   Megaphone,
   Ticket,
-  Shield
-} from "lucide-react"
+  Shield,
+  Image as ImageIcon,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -22,8 +22,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/components/ui/sidebar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 // Menu items.
 const items = [
@@ -36,6 +36,11 @@ const items = [
     title: "Shows & Programs",
     url: "/admin/shows",
     icon: Ticket,
+  },
+  {
+    title: "Hero Carousel",
+    url: "/admin/hero",
+    icon: ImageIcon,
   },
   {
     title: "Auditions",
@@ -67,7 +72,7 @@ const items = [
     url: "/admin/settings",
     icon: Settings,
   },
-]
+];
 
 export function AppSidebar() {
   return (
@@ -100,18 +105,18 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border">
-         <div className="flex items-center gap-3">
-            <Avatar className="h-8 w-8">
-                <AvatarImage src="/avatars/01.png" alt="@admin" />
-                <AvatarFallback>AD</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col text-sm">
-                <span className="font-semibold">Admin User</span>
-                <span className="text-xs text-muted-foreground">admin@rct.com</span>
-            </div>
-         </div>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src="/avatars/01.png" alt="@admin" />
+            <AvatarFallback>AD</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col text-sm">
+            <span className="font-semibold">Admin User</span>
+            <span className="text-xs text-muted-foreground">admin@rct.com</span>
+          </div>
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
