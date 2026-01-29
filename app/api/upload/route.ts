@@ -7,7 +7,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     console.error("BLOB_READ_WRITE_TOKEN is missing");
     return NextResponse.json(
-      { error: "BLOB_READ_WRITE_TOKEN is missing" },
+      { error: "BLOB_READ_WRITE_TOKEN is missing from server environment" },
       { status: 500 },
     );
   }
@@ -18,6 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       request,
       token: process.env.BLOB_READ_WRITE_TOKEN, // Explicitly pass the token
       onBeforeGenerateToken: async (pathname, clientPayload) => {
+        // console.log("Generating token for:", pathname);
         return {
           allowedContentTypes: [
             "image/jpeg",

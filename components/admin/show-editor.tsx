@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { upload } from "@vercel/blob/client";
+import { upload as vercelUpload } from "@vercel/blob/client";
 import {
   ShowWithDetails,
   updateShow,
@@ -62,7 +62,7 @@ export function ShowEditor({ show }: ShowEditorProps) {
     try {
       const file = formData.get("photo") as File;
       if (file && file.size > 0) {
-        const blob = await upload(file.name, file, {
+        const blob = await vercelUpload(file.name, file, {
           access: "public",
           handleUploadUrl: "/api/upload",
         });
@@ -86,7 +86,7 @@ export function ShowEditor({ show }: ShowEditorProps) {
     try {
       const file = formData.get("image") as File;
       if (file && file.size > 0) {
-        const blob = await upload(file.name, file, {
+        const blob = await vercelUpload(file.name, file, {
           access: "public",
           handleUploadUrl: "/api/upload",
         });
@@ -386,7 +386,7 @@ export function ShowEditor({ show }: ShowEditorProps) {
                   try {
                     const file = formData.get("photo") as File;
                     if (file && file.size > 0) {
-                      const blob = await upload(file.name, file, {
+                      const blob = await vercelUpload(file.name, file, {
                         access: "public",
                         handleUploadUrl: "/api/upload",
                       });
@@ -566,19 +566,19 @@ export function ShowEditor({ show }: ShowEditorProps) {
                 try {
                   const file = formData.get("photo") as File;
                   if (file && file.size > 0) {
-                    const blob = await upload(file.name, file, {
+                    const blob = await vercelUpload(file.name, file, {
                       access: "public",
                       handleUploadUrl: "/api/upload",
                     });
                     formData.set("photo_url", blob.url);
                     formData.delete("photo");
                   }
-                  await updateCastMember(editingMember.id, show.id, formData);
+                  await updateCastMember(show.id, editingMember.id, formData);
+                  setEditingMember(null);
                 } catch (error) {
                   console.error("Upload failed", error);
                 }
                 setIsUploading(false);
-                setEditingMember(null);
               }}
               className="space-y-4"
             >

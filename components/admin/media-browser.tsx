@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Image as ImageIcon, Upload, Loader2, Check } from "lucide-react";
 import { uploadImage, getUploadedImages } from "@/app/actions/media";
-import { upload } from "@vercel/blob/client";
+import { upload as vercelUpload } from "@vercel/blob/client";
 import { toast } from "sonner";
 import Image from "next/image";
 
@@ -62,7 +62,7 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
     setUploading(true);
 
     try {
-      const blob = await upload(file.name, file, {
+      const blob = await vercelUpload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
       });
