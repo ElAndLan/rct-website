@@ -93,7 +93,8 @@ export async function submitVolunteerApplication(formData: FormData) {
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      const firstError = (error as any).errors[0];
+      return { success: false, error: firstError?.message || "Invalid input data" };
     }
     console.error("Failed to submit volunteer application:", error);
     return { success: false, error: "Something went wrong. Please try again." };
