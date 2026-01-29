@@ -1,6 +1,8 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY) 
+  : null;
 
 interface SendEmailParams {
   to: string;
@@ -9,7 +11,7 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
-  if (!process.env.RESEND_API_KEY) {
+  if (!resend) {
     console.warn("RESEND_API_KEY is missing. Email logging enabled:");
     console.log(`To: ${to}`);
     console.log(`Subject: ${subject}`);
