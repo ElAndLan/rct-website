@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -97,6 +98,9 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
       <DialogContent className="max-w-3xl max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>Media Library</DialogTitle>
+          <DialogDescription>
+            Browse your uploaded images or upload new ones.
+          </DialogDescription>
         </DialogHeader>
 
         <Tabs

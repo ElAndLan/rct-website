@@ -1,4 +1,4 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -16,13 +16,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
+      token: process.env.BLOB_READ_WRITE_TOKEN, // Explicitly pass the token
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        // Authenticate user here if needed
-        // const session = await auth();
-        // if (!session) {
-        //   throw new Error('Unauthorized');
-        // }
-
         return {
           allowedContentTypes: [
             "image/jpeg",
@@ -44,9 +39,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json(jsonResponse);
   } catch (error) {
     console.error("Error in /api/upload:", error);
+    // Return the specific error message to help debugging
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 }, // The webhook will retry 5 times automatically if the status code is 500-599
+      { error: (error as Error).message, stack: (error as Error).stack },
+      { status: 400 },
     );
   }
 }

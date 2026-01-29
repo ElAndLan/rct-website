@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
@@ -31,6 +32,9 @@ export function ZoomableImage({ src, alt, className }: ZoomableImageProps) {
       </DialogTrigger>
       <DialogContent className="max-w-[90vw] max-h-[90vh] p-0 border-none bg-transparent shadow-none flex items-center justify-center">
         <DialogTitle className="sr-only">{alt}</DialogTitle>
+        <DialogDescription className="sr-only">
+          Zoomed view of {alt}
+        </DialogDescription>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}

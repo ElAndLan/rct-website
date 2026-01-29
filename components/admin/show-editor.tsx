@@ -38,6 +38,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { ImagePicker } from "./image-picker";
 import { Badge } from "@/components/ui/badge";

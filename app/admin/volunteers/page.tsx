@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -116,6 +117,9 @@ export default async function VolunteerAdminPage() {
                           <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
                             <DialogHeader>
                               <DialogTitle>Application Details</DialogTitle>
+                              <DialogDescription>
+                                Full application information for {app.fullName}
+                              </DialogDescription>
                             </DialogHeader>
                             <ScrollArea className="flex-1 pr-4">
                               <div className="space-y-4 pt-4">
