@@ -148,8 +148,22 @@ export default async function ShowDetailPage({
               {show.cast.map((member) => (
                 <div
                   key={member.id}
-                  className="bg-card border rounded-lg p-4 text-center hover:shadow-md transition-shadow"
+                  className="bg-card border rounded-lg p-4 flex flex-col items-center text-center hover:shadow-md transition-shadow"
                 >
+                  <div className="w-24 h-24 mb-3 rounded-full overflow-hidden bg-muted shadow-sm">
+                    {member.imageUrl ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={member.imageUrl}
+                        alt={member.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-secondary">
+                        <span className="text-xs">No Photo</span>
+                      </div>
+                    )}
+                  </div>
                   <div className="font-bold text-lg mb-1">{member.name}</div>
                   <div className="text-muted-foreground">{member.role}</div>
                 </div>

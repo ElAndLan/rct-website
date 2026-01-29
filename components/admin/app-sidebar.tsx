@@ -9,6 +9,7 @@ import {
   Ticket,
   Shield,
   Image as ImageIcon,
+  HeartHandshake,
 } from "lucide-react";
 import {
   Sidebar,
@@ -46,6 +47,11 @@ const items = [
     title: "Auditions",
     url: "/admin/auditions",
     icon: Users,
+  },
+  {
+    title: "Volunteers",
+    url: "/admin/volunteers",
+    icon: HeartHandshake,
   },
   {
     title: "Menu Manager",

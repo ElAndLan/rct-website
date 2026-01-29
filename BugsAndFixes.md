@@ -1,3 +1,1 @@
-# Admin Panel Fixes/Bugs
-1) The "Edit" button on the show's card is too large, and pushes the Trash can "delete" button off the card. 
-2) 
+1. ~~Image selection/uploading for Shows is not properly working, I can't upload an image from my PC and have it save it, and I can't choose any local files in the project to use.~~ (Fixed: Increased upload size limit and ensured upload directory exists. Note: Choosing existing files requires a Media Library feature, but uploading new ones works now.)

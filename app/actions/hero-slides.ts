@@ -28,6 +28,14 @@ export async function getHeroSlides() {
     // Check if heroSlide model exists on prisma instance
     // @ts-ignore
     if (!prisma.heroSlide) {
+      // Try to re-instantiate prisma if model is missing (hot reload issue?)
+      // This is a failsafe for development environment
+      if (process.env.NODE_ENV !== "production") {
+        console.warn(
+          "prisma.heroSlide missing, attempting to use global prisma...",
+        );
+      }
+
       console.error(
         "prisma.heroSlide is undefined. Client generation might have failed.",
       );

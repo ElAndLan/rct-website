@@ -1,108 +1,109 @@
-
-import { getAuditionEvents, createAuditionEvent } from "@/app/actions/auditions"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import prisma from "@/lib/prisma";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { CalendarDays, MapPin, Plus, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import { format } from "date-fns"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Calendar, Eye } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
 
-export default async function AuditionEventsPage() {
-  const events = await getAuditionEvents()
+export default async function AuditionsIndexPage() {
+  // Fetch shows with audition data
+  const shows = await prisma.show.findMany({
+    include: {
+      audition: {
+        include: {
+          _count: {
+            select: { slots: true },
+          },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
   return (
-    <div className="space-y-6 max-w-6xl">
-        <div className="flex justify-between items-center">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Audition Events</h1>
-                <p className="text-muted-foreground">Manage audition dates and sign-up slots.</p>
-            </div>
-            
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button><Plus className="mr-2 h-4 w-4"/> Create Event</Button>
-                </DialogTrigger>
-                <DialogContent>
-                    <DialogHeader>
-                        <DialogTitle>Create Audition Event</DialogTitle>
-                        <DialogDescription>
-                            Define the overall event. You will add time slots in the next step.
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form action={createAuditionEvent}>
-                        <div className="grid gap-4 py-4">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="title" className="text-right">Title</Label>
-                                <Input id="title" name="title" placeholder="e.g. Fall Musical Auditions" className="col-span-3" required />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="location" className="text-right">Location</Label>
-                                <Input id="location" name="location" placeholder="Main Stage" className="col-span-3" />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="startDate" className="text-right">Start Date</Label>
-                                <Input type="date" id="startDate" name="startDate" className="col-span-3" required />
-                            </div>
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="endDate" className="text-right">End Date</Label>
-                                <Input type="date" id="endDate" name="endDate" className="col-span-3" required />
-                            </div>
-                            <div className="grid grid-cols-4 items-start gap-4">
-                                <Label htmlFor="description" className="text-right pt-2">Details</Label>
-                                <Textarea id="description" name="description" className="col-span-3" placeholder="What to prepare..." />
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button type="submit">Create & Manage Slots</Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Auditions Management</h1>
+      </div>
 
-        <div className="grid gap-4">
-            {events.map((event) => (
-                <Card key={event.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2">
-                        <div className="space-y-1">
-                            <CardTitle className="text-xl">{event.title}</CardTitle>
-                            <div className="flex items-center text-sm text-muted-foreground gap-4">
-                                <span className="flex items-center gap-1"><CalendarDays size={14} /> {format(event.startDate, 'MMM d, yyyy')} - {format(event.endDate, 'MMM d, yyyy')}</span>
-                                {event.location && <span className="flex items-center gap-1"><MapPin size={14} /> {event.location}</span>}
-                            </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Shows & Productions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Show Title</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Audition Status</TableHead>
+                <TableHead>Slots</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {shows.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={5}
+                    className="text-center py-8 text-muted-foreground"
+                  >
+                    No shows found. Create a show first.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                shows.map((show) => {
+                  const hasAudition = !!show.audition;
+                  const isActive = show.audition?.isActive;
+
+                  return (
+                    <TableRow key={show.id}>
+                      <TableCell className="font-medium">
+                        {show.title}
+                        <div className="text-xs text-muted-foreground">
+                          /{show.slug}
                         </div>
-                        <Button asChild variant="outline" size="sm">
-                            <Link href={`/admin/auditions/${event.id}`}>
-                                Manage Slots <ArrowRight className="ml-2 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </CardHeader>
-                    <CardContent>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{event.description}</p>
-                        <div className="text-xs font-medium bg-muted inline-block px-2 py-1 rounded-md">
-                            {event._count.slots} Time Slots Created
-                        </div>
-                    </CardContent>
-                </Card>
-            ))}
-            
-            {events.length === 0 && (
-                <div className="text-center py-12 border-2 border-dashed rounded-lg text-muted-foreground">
-                    No audition events found. Create one to get started.
-                </div>
-            )}
-        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{show.status}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {hasAudition ? (
+                          <Badge variant={isActive ? "default" : "secondary"}>
+                            {isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">
+                            -
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>{show.audition?._count.slots || 0}</TableCell>
+                      <TableCell className="text-right">
+                        <Link href={`/admin/auditions/${show.id}`}>
+                          <Button variant="ghost" size="sm">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            {hasAudition ? "Manage" : "Setup"}
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
-  )
+  );
 }

@@ -5,6 +5,7 @@ import {
   ShowWithDetails,
   updateShow,
   addCastMember,
+  updateCastMember,
   deleteCastMember,
   uploadShowPhoto,
   deleteShowPhoto,
@@ -29,7 +30,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2, Upload, Plus, Save } from "lucide-react";
+import { Trash2, Upload, Plus, Save, Pencil } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { ImagePicker } from "./image-picker";
 import { Badge } from "@/components/ui/badge";
 
 interface ShowEditorProps {
@@ -41,6 +50,9 @@ export function ShowEditor({ show }: ShowEditorProps) {
     "details" | "cast" | "photos" | "program"
   >("details");
   const [isUploading, setIsUploading] = useState(false);
+  const [editingMember, setEditingMember] = useState<
+    NonNullable<ShowWithDetails>["cast"][number] | null
+  >(null);
 
   // Helper for file uploads to wrap the server action and handle loading state
   const handlePhotoUpload = async (formData: FormData) => {
@@ -250,9 +262,9 @@ export function ShowEditor({ show }: ShowEditorProps) {
                 )}
                 <form
                   action={handleMainImageUpload}
-                  className="flex-1 flex gap-2 items-center"
+                  className="flex-1 space-y-4"
                 >
-                  <Input type="file" name="image" accept="image/*" required />
+                  <ImagePicker name="image" label="New Main Image" />
                   <Button type="submit" disabled={isUploading}>
                     {isUploading ? "Uploading..." : "Upload New Image"}
                   </Button>
@@ -274,6 +286,7 @@ export function ShowEditor({ show }: ShowEditorProps) {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Photo</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead className="w-[100px]">Actions</TableHead>
@@ -282,23 +295,47 @@ export function ShowEditor({ show }: ShowEditorProps) {
                 <TableBody>
                   {show.cast.map((member) => (
                     <TableRow key={member.id}>
+                      <TableCell>
+                        {member.imageUrl ? (
+                          <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                            <img
+                              src={member.imageUrl}
+                              alt={member.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">
+                            N/A
+                          </div>
+                        )}
+                      </TableCell>
                       <TableCell>{member.name}</TableCell>
                       <TableCell>{member.role}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteCastMember(member.id, show.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingMember(member)}
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => deleteCastMember(member.id, show.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
                   {show.cast.length === 0 && (
                     <TableRow>
                       <TableCell
-                        colSpan={3}
+                        colSpan={4}
                         className="text-center text-muted-foreground"
                       >
                         No cast members added yet.
@@ -316,29 +353,42 @@ export function ShowEditor({ show }: ShowEditorProps) {
             </CardHeader>
             <CardContent>
               <form
-                action={addCastMember.bind(null, show.id)}
-                className="flex gap-4 items-end"
+                action={async (formData) => {
+                  setIsUploading(true);
+                  await addCastMember(show.id, formData);
+                  setIsUploading(false);
+                  const form = document.getElementById(
+                    "add-cast-form",
+                  ) as HTMLFormElement;
+                  if (form) form.reset();
+                }}
+                id="add-cast-form"
+                className="space-y-4"
               >
-                <div className="space-y-2 flex-1">
-                  <Label htmlFor="cast-name">Name</Label>
-                  <Input
-                    id="cast-name"
-                    name="name"
-                    placeholder="Actor Name"
-                    required
-                  />
+                <ImagePicker name="photo" label="Photo (Optional)" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="cast-name">Name</Label>
+                    <Input
+                      id="cast-name"
+                      name="name"
+                      placeholder="Actor Name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cast-role">Role</Label>
+                    <Input
+                      id="cast-role"
+                      name="role"
+                      placeholder="Character Name"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2 flex-1">
-                  <Label htmlFor="cast-role">Role</Label>
-                  <Input
-                    id="cast-role"
-                    name="role"
-                    placeholder="Character Name"
-                    required
-                  />
-                </div>
-                <Button type="submit">
-                  <Plus className="w-4 h-4 mr-2" /> Add
+                <Button type="submit" disabled={isUploading}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  {isUploading ? "Adding..." : "Add Member"}
                 </Button>
               </form>
             </CardContent>
@@ -386,19 +436,10 @@ export function ShowEditor({ show }: ShowEditorProps) {
                 <form
                   id="photo-upload-form"
                   action={handlePhotoUpload}
-                  className="flex gap-4 items-end"
+                  className="space-y-4"
                 >
-                  <div className="space-y-2 flex-1">
-                    <Label htmlFor="photo-file">Photo</Label>
-                    <Input
-                      id="photo-file"
-                      type="file"
-                      name="photo"
-                      accept="image/*"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2 flex-1">
+                  <ImagePicker name="photo" label="Photo" />
+                  <div className="space-y-2">
                     <Label htmlFor="photo-caption">Caption (Optional)</Label>
                     <Input
                       id="photo-caption"
@@ -465,6 +506,84 @@ export function ShowEditor({ show }: ShowEditorProps) {
           </Card>
         </div>
       )}
+
+      <Dialog
+        open={!!editingMember}
+        onOpenChange={(open) => !open && setEditingMember(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Cast Member</DialogTitle>
+          </DialogHeader>
+          {editingMember && (
+            <form
+              action={async (formData) => {
+                setIsUploading(true);
+                await updateCastMember(editingMember.id, show.id, formData);
+                setIsUploading(false);
+                setEditingMember(null);
+              }}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                {editingMember.imageUrl && (
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm text-muted-foreground">
+                      Current Photo:
+                    </span>
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                      <img
+                        src={editingMember.imageUrl}
+                        alt="Current"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                <ImagePicker name="photo" label="Photo (Optional)" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cast-name">Name</Label>
+                <Input
+                  id="edit-cast-name"
+                  name="name"
+                  defaultValue={editingMember.name}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cast-role">Role</Label>
+                <Input
+                  id="edit-cast-role"
+                  name="role"
+                  defaultValue={editingMember.role}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cast-bio">Bio</Label>
+                <Textarea
+                  id="edit-cast-bio"
+                  name="bio"
+                  defaultValue={editingMember.bio || ""}
+                />
+              </div>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setEditingMember(null)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUploading}>
+                  {isUploading ? "Saving..." : "Save Changes"}
+                </Button>
+              </DialogFooter>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
