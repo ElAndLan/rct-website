@@ -1,6 +1,5 @@
-
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
-import { NextResponse } from 'next/server';
+import { handleUpload, type HandleUploadBody } from "@vercel/blob";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
@@ -17,7 +16,12 @@ export async function POST(request: Request): Promise<NextResponse> {
         // }
 
         return {
-          allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
+          allowedContentTypes: [
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "image/webp",
+          ],
           tokenPayload: JSON.stringify({
             // optional payload
           }),

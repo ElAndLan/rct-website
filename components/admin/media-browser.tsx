@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Image as ImageIcon, Upload, Loader2, Check } from "lucide-react";
 import { uploadImage, getUploadedImages } from "@/app/actions/media";
+import { upload } from "@vercel/blob/client";
 import { toast } from "sonner";
 import Image from "next/image";
 

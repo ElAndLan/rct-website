@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { upload } from "@vercel/blob/client";
 import {
   ShowWithDetails,
   updateShow,
@@ -57,7 +58,20 @@ export function ShowEditor({ show }: ShowEditorProps) {
   // Helper for file uploads to wrap the server action and handle loading state
   const handlePhotoUpload = async (formData: FormData) => {
     setIsUploading(true);
-    await uploadShowPhoto(show.id, formData);
+    try {
+      const file = formData.get("photo") as File;
+      if (file && file.size > 0) {
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        formData.set("photo_url", blob.url);
+        formData.delete("photo");
+      }
+      await uploadShowPhoto(show.id, formData);
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
     setIsUploading(false);
     // Reset form if needed, but simple file input usually clears on re-render if key changes or manually cleared
     const form = document.getElementById(
@@ -68,7 +82,20 @@ export function ShowEditor({ show }: ShowEditorProps) {
 
   const handleMainImageUpload = async (formData: FormData) => {
     setIsUploading(true);
-    await updateShowMainImage(show.id, formData);
+    try {
+      const file = formData.get("image") as File;
+      if (file && file.size > 0) {
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload",
+        });
+        formData.set("image_url", blob.url);
+        formData.delete("image");
+      }
+      await updateShowMainImage(show.id, formData);
+    } catch (error) {
+      console.error("Upload failed", error);
+    }
     setIsUploading(false);
   };
 
