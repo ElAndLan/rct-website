@@ -103,6 +103,7 @@ export function AuditionManager({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<AuditionSlot | null>(null);
   const [isViewAttendeesOpen, setIsViewAttendeesOpen] = useState(false);
+  const router = useRouter();
 
   // --- Handlers ---
 

@@ -1,9 +1,19 @@
-import { getVolunteerApplications, updateVolunteerStatus, deleteVolunteerApplication } from "@/app/actions/volunteer";
+import { getVolunteerApplications } from "@/app/actions/volunteer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2, Mail, CheckCircle, Archive } from "lucide-react";
+import {
+  DeleteVolunteerButton,
+  UpdateStatusButton,
+} from "@/components/admin/volunteer-actions";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -44,7 +54,10 @@ export default async function VolunteerAdminPage() {
             <TableBody>
               {applications.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={5}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     No applications yet.
                   </TableCell>
                 </TableRow>
@@ -57,13 +70,18 @@ export default async function VolunteerAdminPage() {
                     <TableCell>
                       <div className="font-medium">{app.fullName}</div>
                       <div className="text-xs text-muted-foreground">
-                        {app.email} {app.email && app.phoneNumber && "•"} {app.phoneNumber}
+                        {app.email} {app.email && app.phoneNumber && "•"}{" "}
+                        {app.phoneNumber}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1">
                         {app.roles.slice(0, 2).map((role) => (
-                          <Badge key={role} variant="secondary" className="text-xs">
+                          <Badge
+                            key={role}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {role}
                           </Badge>
                         ))}
@@ -80,8 +98,8 @@ export default async function VolunteerAdminPage() {
                           app.status === "CONTACTED"
                             ? "default"
                             : app.status === "ARCHIVED"
-                            ? "secondary"
-                            : "outline"
+                              ? "secondary"
+                              : "outline"
                         }
                       >
                         {app.status}
@@ -103,28 +121,40 @@ export default async function VolunteerAdminPage() {
                               <div className="space-y-4 pt-4">
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <h4 className="font-semibold text-sm text-muted-foreground">Name</h4>
+                                    <h4 className="font-semibold text-sm text-muted-foreground">
+                                      Name
+                                    </h4>
                                     <p>{app.fullName}</p>
                                   </div>
                                   <div>
-                                    <h4 className="font-semibold text-sm text-muted-foreground">Date Applied</h4>
-                                    <p>{format(new Date(app.createdAt), "PPpp")}</p>
+                                    <h4 className="font-semibold text-sm text-muted-foreground">
+                                      Date Applied
+                                    </h4>
+                                    <p>
+                                      {format(new Date(app.createdAt), "PPpp")}
+                                    </p>
                                   </div>
                                 </div>
-                                
+
                                 <div className="grid grid-cols-2 gap-4">
                                   <div>
-                                    <h4 className="font-semibold text-sm text-muted-foreground">Email</h4>
+                                    <h4 className="font-semibold text-sm text-muted-foreground">
+                                      Email
+                                    </h4>
                                     <p>{app.email || "N/A"}</p>
                                   </div>
                                   <div>
-                                    <h4 className="font-semibold text-sm text-muted-foreground">Phone</h4>
+                                    <h4 className="font-semibold text-sm text-muted-foreground">
+                                      Phone
+                                    </h4>
                                     <p>{app.phoneNumber || "N/A"}</p>
                                   </div>
                                 </div>
 
                                 <div>
-                                  <h4 className="font-semibold text-sm text-muted-foreground mb-2">Interested Roles</h4>
+                                  <h4 className="font-semibold text-sm text-muted-foreground mb-2">
+                                    Interested Roles
+                                  </h4>
                                   <div className="flex flex-wrap gap-2">
                                     {app.roles.map((role) => (
                                       <Badge key={role} variant="secondary">
@@ -135,43 +165,51 @@ export default async function VolunteerAdminPage() {
                                 </div>
 
                                 <div>
-                                  <h4 className="font-semibold text-sm text-muted-foreground">About</h4>
-                                  <p className="whitespace-pre-wrap text-sm">{app.about || "N/A"}</p>
+                                  <h4 className="font-semibold text-sm text-muted-foreground">
+                                    About
+                                  </h4>
+                                  <p className="whitespace-pre-wrap text-sm">
+                                    {app.about || "N/A"}
+                                  </p>
                                 </div>
 
                                 <div>
-                                  <h4 className="font-semibold text-sm text-muted-foreground">Availability</h4>
-                                  <p className="whitespace-pre-wrap text-sm">{app.availability || "N/A"}</p>
+                                  <h4 className="font-semibold text-sm text-muted-foreground">
+                                    Availability
+                                  </h4>
+                                  <p className="whitespace-pre-wrap text-sm">
+                                    {app.availability || "N/A"}
+                                  </p>
                                 </div>
 
                                 <div>
-                                  <h4 className="font-semibold text-sm text-muted-foreground">Additional Comments</h4>
-                                  <p className="whitespace-pre-wrap text-sm">{app.additionalComments || "N/A"}</p>
+                                  <h4 className="font-semibold text-sm text-muted-foreground">
+                                    Additional Comments
+                                  </h4>
+                                  <p className="whitespace-pre-wrap text-sm">
+                                    {app.additionalComments || "N/A"}
+                                  </p>
                                 </div>
                               </div>
                             </ScrollArea>
-                            
+
                             <div className="border-t pt-4 flex justify-between items-center mt-4">
-                              <form action={deleteVolunteerApplication.bind(null, app.id)}>
-                                <Button variant="destructive" size="sm">
-                                  <Trash2 className="w-4 h-4 mr-2" /> Delete
-                                </Button>
-                              </form>
+                              <DeleteVolunteerButton id={app.id} />
 
                               <div className="space-x-2">
                                 {app.status !== "CONTACTED" && (
-                                  <form action={updateVolunteerStatus.bind(null, app.id, "CONTACTED")} className="inline">
-                                    <Button variant="default" size="sm">
-                                      <CheckCircle className="w-4 h-4 mr-2" /> Mark Contacted
-                                    </Button>
-                                  </form>
+                                  <UpdateStatusButton
+                                    id={app.id}
+                                    status="CONTACTED"
+                                    currentStatus={app.status}
+                                  />
                                 )}
                                 {app.status !== "ARCHIVED" && (
-                                  <form action={updateVolunteerStatus.bind(null, app.id, "ARCHIVED")} className="inline">
-                                    <Button variant="outline" size="sm">
-                                      <Archive className="w-4 h-4 mr-2" /> Archive
-                                    </Button>
-                                  </form>
+                                  <UpdateStatusButton
+                                    id={app.id}
+                                    status="ARCHIVED"
+                                    currentStatus={app.status}
+                                  />
                                 )}
                               </div>
                             </div>
