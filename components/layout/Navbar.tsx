@@ -36,9 +36,6 @@ export async function Navbar() {
               RCT
             </div>
           )}
-          <span className="font-bold text-xl hidden sm:inline-block">
-            Reading Civic Theatre
-          </span>
         </Link>
 
         {/* Desktop Navigation */}
