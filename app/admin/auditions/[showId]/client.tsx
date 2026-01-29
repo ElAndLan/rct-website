@@ -386,30 +386,33 @@ export function AuditionManager({
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <div
-                              className="flex items-center text-xs text-muted-foreground mr-1"
-                              title="Attendees / Capacity"
-                            >
-                              <Users className="w-3 h-3 mr-1" />
-                              {slot._count.attendees} / {slot.capacity}
-                            </div>
                             <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 text-blue-500 hover:text-blue-600"
+                              variant={
+                                slot.attendees.length > 0
+                                  ? "secondary"
+                                  : "ghost"
+                              }
+                              size="sm"
+                              className={cn(
+                                "h-7 text-xs",
+                                slot.attendees.length > 0 &&
+                                  "bg-blue-100 text-blue-700 hover:bg-blue-200",
+                              )}
                               onClick={() => {
                                 setSelectedSlot(slot);
                                 setIsViewAttendeesOpen(true);
                               }}
-                              title="View Attendees"
                             >
-                              <Eye className="w-3 h-3" />
+                              <Users className="w-3 h-3 mr-1" />
+                              {slot._count.attendees} / {slot.capacity}
                             </Button>
+
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-6 w-6 text-destructive hover:text-destructive/90"
+                              className="h-7 w-7 text-destructive hover:text-destructive/90"
                               onClick={() => handleDeleteSlot(slot.id)}
+                              title="Delete Slot"
                             >
                               <Trash2 className="w-3 h-3" />
                             </Button>
@@ -445,14 +448,14 @@ export function AuditionManager({
               {selectedSlot.attendees.map((attendee) => (
                 <div
                   key={attendee.id}
-                  className="border rounded-md p-4 space-y-2 bg-muted/20"
+                  className="border rounded-md p-4 space-y-2 bg-card"
                 >
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-semibold text-lg">
+                    <div className="space-y-1">
+                      <h4 className="font-semibold text-lg flex items-center gap-2">
                         {attendee.fullName}
                       </h4>
-                      <div className="text-sm text-muted-foreground flex flex-col gap-1 mt-1">
+                      <div className="text-sm text-muted-foreground flex flex-col gap-1">
                         {attendee.email && (
                           <span className="flex items-center gap-2">
                             📧 {attendee.email}
@@ -465,15 +468,14 @@ export function AuditionManager({
                         )}
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground text-right">
-                      <div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="text-xs text-muted-foreground">
                         Booked:{" "}
                         {format(new Date(attendee.createdAt), "MMM d, h:mm a")}
                       </div>
                       <Button
                         variant="destructive"
                         size="sm"
-                        className="mt-2 h-7 text-xs"
                         onClick={() => handleCancelBooking(attendee.id)}
                       >
                         Cancel Booking
