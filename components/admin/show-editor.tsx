@@ -554,6 +554,9 @@ export function ShowEditor({ show }: ShowEditorProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Cast Member</DialogTitle>
+            <DialogDescription>
+              Make changes to the cast member&apos;s details below.
+            </DialogDescription>
           </DialogHeader>
           {editingMember && (
             <form

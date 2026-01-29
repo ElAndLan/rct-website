@@ -1,8 +1,16 @@
-import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import { handleUpload, type HandleUploadBody } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request): Promise<NextResponse> {
   const body = (await request.json()) as HandleUploadBody;
+
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    console.error("BLOB_READ_WRITE_TOKEN is missing");
+    return NextResponse.json(
+      { error: "BLOB_READ_WRITE_TOKEN is missing" },
+      { status: 500 },
+    );
+  }
 
   try {
     const jsonResponse = await handleUpload({
@@ -35,6 +43,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error("Error in /api/upload:", error);
     return NextResponse.json(
       { error: (error as Error).message },
       { status: 400 }, // The webhook will retry 5 times automatically if the status code is 500-599
