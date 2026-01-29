@@ -1,81 +1,86 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Image as ImageIcon, Upload, Loader2, Check } from "lucide-react"
-import { uploadImage, getUploadedImages } from "@/app/actions/media"
-import { toast } from "sonner"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Image as ImageIcon, Upload, Loader2, Check } from "lucide-react";
+import { uploadImage, getUploadedImages } from "@/app/actions/media";
+import { toast } from "sonner";
+import Image from "next/image";
 
 interface MediaBrowserProps {
-  onSelect: (url: string) => void
-  trigger?: React.ReactNode
+  onSelect: (url: string) => void;
+  trigger?: React.ReactNode;
 }
 
 export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
-  const [open, setOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("library")
-  const [images, setImages] = useState<string[]>([])
-  const [loading, setLoading] = useState(false)
-  const [uploading, setUploading] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("library");
+  const [images, setImages] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   // Load images when dialog opens or tab changes to library
   useEffect(() => {
     if (open && activeTab === "library") {
-      loadImages()
+      loadImages();
     }
-  }, [open, activeTab])
+  }, [open, activeTab]);
 
   async function loadImages() {
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await getUploadedImages()
+      const result = await getUploadedImages();
       if (result.success && result.images) {
-        setImages(result.images)
+        setImages(result.images);
       } else {
-        toast.error("Failed to load images")
+        toast.error("Failed to load images");
       }
     } catch (error) {
-      toast.error("An error occurred while loading images")
+      toast.error("An error occurred while loading images");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setUploading(true)
-    const formData = new FormData()
-    formData.append("file", file)
+    setUploading(true);
 
     try {
-      const result = await uploadImage(formData)
-      if (result.success && result.url) {
-        toast.success("Image uploaded successfully")
-        onSelect(result.url)
-        setOpen(false) // Close and select
-        // Reset tab for next time
-        setActiveTab("library")
-      } else {
-        toast.error(result.error || "Failed to upload image")
-      }
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+
+      toast.success("Image uploaded successfully");
+      onSelect(blob.url);
+      setOpen(false); // Close and select
+      // Reset tab for next time
+      setActiveTab("library");
     } catch (error) {
-      toast.error("An error occurred during upload")
+      console.error("Upload error:", error);
+      toast.error("An error occurred during upload");
     } finally {
-      setUploading(false)
+      setUploading(false);
     }
   }
 
   function handleSelectImage(url: string) {
-    onSelect(url)
-    setOpen(false)
+    onSelect(url);
+    setOpen(false);
   }
 
   return (
@@ -92,13 +97,17 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
         <DialogHeader>
           <DialogTitle>Media Library</DialogTitle>
         </DialogHeader>
-        
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="flex-1 flex flex-col min-h-0"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="library">Library</TabsTrigger>
             <TabsTrigger value="upload">Upload New</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="library" className="flex-1 min-h-0 mt-4">
             {loading ? (
               <div className="flex items-center justify-center h-64">
@@ -121,9 +130,9 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
                       className="group relative aspect-video bg-muted rounded-md overflow-hidden border hover:ring-2 hover:ring-primary focus:outline-none focus:ring-2 focus:ring-primary transition-all"
                       onClick={() => handleSelectImage(url)}
                     >
-                      <img 
-                        src={url} 
-                        alt="Media" 
+                      <img
+                        src={url}
+                        alt="Media"
                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         loading="lazy"
                       />
@@ -136,7 +145,7 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
               </ScrollArea>
             )}
           </TabsContent>
-          
+
           <TabsContent value="upload" className="mt-4">
             <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed rounded-lg bg-muted/10 p-8 text-center">
               <div className="bg-muted p-4 rounded-full mb-4">
@@ -146,7 +155,7 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
               <p className="text-sm text-muted-foreground mb-6 max-w-sm">
                 Choose a file from your computer to upload to the media library.
               </p>
-              
+
               <div className="relative">
                 <Input
                   id="file-upload"
@@ -174,5 +183,5 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
         </Tabs>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

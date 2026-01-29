@@ -355,7 +355,20 @@ export function ShowEditor({ show }: ShowEditorProps) {
               <form
                 action={async (formData) => {
                   setIsUploading(true);
-                  await addCastMember(show.id, formData);
+                  try {
+                    const file = formData.get("photo") as File;
+                    if (file && file.size > 0) {
+                      const blob = await upload(file.name, file, {
+                        access: "public",
+                        handleUploadUrl: "/api/upload",
+                      });
+                      formData.set("photo_url", blob.url);
+                      formData.delete("photo");
+                    }
+                    await addCastMember(show.id, formData);
+                  } catch (error) {
+                    console.error("Upload failed", error);
+                  }
                   setIsUploading(false);
                   const form = document.getElementById(
                     "add-cast-form",
@@ -519,7 +532,20 @@ export function ShowEditor({ show }: ShowEditorProps) {
             <form
               action={async (formData) => {
                 setIsUploading(true);
-                await updateCastMember(editingMember.id, show.id, formData);
+                try {
+                  const file = formData.get("photo") as File;
+                  if (file && file.size > 0) {
+                    const blob = await upload(file.name, file, {
+                      access: "public",
+                      handleUploadUrl: "/api/upload",
+                    });
+                    formData.set("photo_url", blob.url);
+                    formData.delete("photo");
+                  }
+                  await updateCastMember(editingMember.id, show.id, formData);
+                } catch (error) {
+                  console.error("Upload failed", error);
+                }
                 setIsUploading(false);
                 setEditingMember(null);
               }}

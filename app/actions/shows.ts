@@ -177,6 +177,10 @@ async function saveFile(file: File): Promise<string> {
 }
 
 async function saveUrl(url: string): Promise<string> {
+  if (url.includes(".public.blob.vercel-storage.com")) {
+    return url;
+  }
+
   const response = await fetch(url);
   if (!response.ok) throw new Error("Failed to fetch image from URL");
   const arrayBuffer = await response.arrayBuffer();

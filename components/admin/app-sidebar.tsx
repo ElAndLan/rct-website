@@ -113,7 +113,7 @@ export function AppSidebar() {
       <SidebarFooter className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-3">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/avatars/01.png" alt="@admin" />
+            <AvatarImage src="" alt="@admin" />
             <AvatarFallback>AD</AvatarFallback>
           </Avatar>
           <div className="flex flex-col text-sm">
