@@ -252,7 +252,11 @@ export async function bookAuditionSlot(data: z.infer<typeof BookingSchema>) {
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { success: false, error: error.errors[0].message };
+      const firstError = (error as any).errors[0];
+      return {
+        success: false,
+        error: firstError?.message || "Invalid input data",
+      };
     }
     console.error("Error booking audition:", error);
     return {

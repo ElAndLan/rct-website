@@ -199,3 +199,33 @@ model AuditionAttendee {
   
   @@index([slotId])
 }
+
+// News & Announcements
+model NewsPost {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  content   String
+  imageUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Contact Form Submissions
+model ContactSubmission {
+  id            String   @id @default(cuid())
+  name          String
+  contactMethod String
+  contactValue  String
+  subject       String
+  message       String
+  createdAt     DateTime @default(now())
+}
+
+// Global Site Settings
+model SiteSettings {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
