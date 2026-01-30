@@ -71,12 +71,17 @@ const items = [
   {
     title: "Sponsors",
     url: "/admin/sponsors",
-    icon: CalendarDays, 
+    icon: CalendarDays,
   },
   {
     title: "Fundraisers",
     url: "/admin/fundraisers",
     icon: HeartHandshake,
+  },
+  {
+    title: "Memberships",
+    url: "/admin/memberships",
+    icon: Users,
   },
   {
     title: "Settings",

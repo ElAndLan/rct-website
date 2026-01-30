@@ -25,6 +25,9 @@ export function SettingsForm({
   const [homeSectionImageUrl, setHomeSectionImageUrl] = useState(
     initialSettings.homeSectionImageUrl || "",
   );
+  const [donationImageUrl, setDonationImageUrl] = useState(
+    initialSettings.donationImageUrl || "",
+  );
   const router = useRouter();
 
   async function onSubmit(formData: FormData) {
@@ -150,6 +153,87 @@ export function SettingsForm({
                   <Input
                     id="homeSectionImage"
                     name="homeSectionImage"
+                    type="file"
+                    accept="image/*"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-6 border-t">
+            <h3 className="text-lg font-semibold">Donation Page</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Configure the content for the donation page.
+            </p>
+
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="donationTitle">Donation Title</Label>
+                <Input
+                  id="donationTitle"
+                  name="donationTitle"
+                  defaultValue={initialSettings.donationTitle}
+                  placeholder="Support Reading Civic Theatre"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="donationBody">Donation Message</Label>
+                <textarea
+                  id="donationBody"
+                  name="donationBody"
+                  className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  defaultValue={initialSettings.donationBody}
+                  placeholder="Explain why donations are important..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="donationPaypalLink">PayPal Donation Link</Label>
+                <Input
+                  id="donationPaypalLink"
+                  name="donationPaypalLink"
+                  defaultValue={initialSettings.donationPaypalLink}
+                  placeholder="https://www.paypal.com/donate/..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="donationImage">Donation Page Image</Label>
+                <input
+                  type="hidden"
+                  name="donationImageUrl"
+                  value={donationImageUrl}
+                />
+
+                {donationImageUrl && (
+                  <div className="mb-4 p-4 border rounded-md bg-neutral-100 flex justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={donationImageUrl}
+                      alt="Donation Page"
+                      className="max-h-[300px] w-auto object-contain"
+                    />
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Input
+                    value={donationImageUrl}
+                    onChange={(e) => setDonationImageUrl(e.target.value)}
+                    placeholder="https://... or /uploads/..."
+                  />
+                  <MediaBrowser onSelect={setDonationImageUrl} />
+                </div>
+
+                <div className="mt-2">
+                  <p className="text-sm font-medium mb-1">
+                    Or upload directly:
+                  </p>
+                  <Input
+                    id="donationImage"
+                    name="donationImage"
                     type="file"
                     accept="image/*"
                   />

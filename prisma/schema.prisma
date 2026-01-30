@@ -263,3 +263,53 @@ model FundraiserEvent {
   
   @@index([fundraiserId])
 }
+
+// Custom Pages
+model Page {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Membership Applications
+model MembershipApplication {
+  id        String   @id @default(cuid())
+  // Membership Type
+  type      String   // Regular, Student, Family
+  school    String?  // For Student
+  grade     String?  // For Student
+  
+  // Contact Info
+  firstName String
+  lastName  String
+  address   String
+  city      String
+  state     String
+  zip       String
+  phoneHome String?
+  phoneCell String?
+  email     String
+  
+  // Optional Demographics
+  age       String?
+  birthDate String? // Month/Day or Month/Year for family members
+  
+  // Privacy Options (true = DO NOT LIST)
+  hideAddress Boolean @default(false)
+  hidePhone   Boolean @default(false)
+  hideEmail   Boolean @default(false)
+  
+  // Family Members (Stored as JSON for simplicity, or we could make a relation)
+  // We'll use a JSON string to store an array of { name: string, birthDate: string }
+  familyMembers String? 
+  
+  // Membership Tier / Donation
+  tier          String   // e.g. "Regular Member", "Friend", "Bronze", etc.
+  amount        String   // The donation amount they selected/entered
+  
+  createdAt DateTime @default(now())
+}

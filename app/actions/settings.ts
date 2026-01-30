@@ -26,20 +26,30 @@ export async function updateSiteSettings(formData: FormData) {
   try {
     const logoFile = formData.get("logo") as File;
     const logoUrlString = formData.get("logoUrl") as string;
-    
+
     // Home Section Fields
     const homeSectionImageFile = formData.get("homeSectionImage") as File;
-    const homeSectionImageUrlString = formData.get("homeSectionImageUrl") as string;
+    const homeSectionImageUrlString = formData.get(
+      "homeSectionImageUrl",
+    ) as string;
     const homeSectionTitle = formData.get("homeSectionTitle") as string;
     const homeSectionBody = formData.get("homeSectionBody") as string;
 
     // --- Helper to process image upload/url ---
-    async function processImage(file: File | null, urlString: string, prefix: string): Promise<string> {
+    async function processImage(
+      file: File | null,
+      urlString: string,
+      prefix: string,
+    ): Promise<string> {
       let finalUrl = urlString;
 
       // Fix relative paths
-      if (finalUrl && !finalUrl.startsWith("http") && !finalUrl.startsWith("/")) {
-         finalUrl = "/" + finalUrl;
+      if (
+        finalUrl &&
+        !finalUrl.startsWith("http") &&
+        !finalUrl.startsWith("/")
+      ) {
+        finalUrl = "/" + finalUrl;
       }
 
       // Handle file upload
@@ -63,9 +73,20 @@ export async function updateSiteSettings(formData: FormData) {
 
     // Process Logo
     const finalLogoUrl = await processImage(logoFile, logoUrlString, "logo");
-    
+
     // Process Home Section Image
-    const finalHomeSectionImageUrl = await processImage(homeSectionImageFile, homeSectionImageUrlString, "home-section");
+    const finalHomeSectionImageUrl = await processImage(
+      homeSectionImageFile,
+      homeSectionImageUrlString,
+      "home-section",
+    );
+
+    // Process Donation Image
+    const finalDonationImageUrl = await processImage(
+      donationImageFile,
+      donationImageUrlString,
+      "donation",
+    );
 
     // Upsert Settings
     const settingsToUpdate = [
@@ -73,6 +94,10 @@ export async function updateSiteSettings(formData: FormData) {
       { key: "homeSectionImageUrl", value: finalHomeSectionImageUrl },
       { key: "homeSectionTitle", value: homeSectionTitle },
       { key: "homeSectionBody", value: homeSectionBody },
+      { key: "donationTitle", value: donationTitle },
+      { key: "donationBody", value: donationBody },
+      { key: "donationPaypalLink", value: donationPaypalLink },
+      { key: "donationImageUrl", value: finalDonationImageUrl },
     ];
 
     for (const setting of settingsToUpdate) {
@@ -87,6 +112,7 @@ export async function updateSiteSettings(formData: FormData) {
 
     revalidatePath("/");
     revalidatePath("/admin/settings");
+    revalidatePath("/donate");
     return { success: true };
   } catch (error) {
     console.error("Failed to update settings:", error);
