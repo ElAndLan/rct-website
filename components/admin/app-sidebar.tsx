@@ -71,7 +71,12 @@ const items = [
   {
     title: "Sponsors",
     url: "/admin/sponsors",
-    icon: CalendarDays, // Using CalendarDays as a placeholder for Sponsors
+    icon: CalendarDays, 
+  },
+  {
+    title: "Fundraisers",
+    url: "/admin/fundraisers",
+    icon: HeartHandshake,
   },
   {
     title: "Settings",

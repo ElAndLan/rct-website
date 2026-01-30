@@ -229,3 +229,37 @@ model SiteSettings {
   key   String @unique
   value String
 }
+
+// Fundraisers
+model Fundraiser {
+  id               String            @id @default(cuid())
+  title            String
+  slug             String            @unique
+  shortDescription String
+  description      String
+  
+  locationName     String?
+  address          String?
+  city             String?
+  state            String?
+  zip              String?
+  
+  imageUrl         String?
+  isActive         Boolean           @default(true)
+  
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  
+  events           FundraiserEvent[]
+}
+
+model FundraiserEvent {
+  id           String     @id @default(cuid())
+  fundraiserId String
+  fundraiser   Fundraiser @relation(fields: [fundraiserId], references: [id], onDelete: Cascade)
+  
+  startTime    DateTime
+  endTime      DateTime?
+  
+  @@index([fundraiserId])
+}
