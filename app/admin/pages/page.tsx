@@ -1,10 +1,5 @@
-import { getPages, deletePage } from "@/app/actions/pages";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { getPages, deletePageAction } from "@/app/actions/pages";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -68,9 +63,7 @@ export default async function PagesAdminPage() {
               ) : (
                 pages.map((page) => (
                   <TableRow key={page.id}>
-                    <TableCell className="font-medium">
-                      {page.title}
-                    </TableCell>
+                    <TableCell className="font-medium">{page.title}</TableCell>
                     <TableCell>
                       <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
                         /{page.slug}
@@ -88,22 +81,31 @@ export default async function PagesAdminPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                         {page.isPublished && (
-                            <Link href={`/${page.slug}`} target="_blank">
-                              <Button variant="ghost" size="icon" title="View Live">
-                                <ExternalLink className="h-4 w-4" />
-                              </Button>
-                            </Link>
-                         )}
+                        {page.isPublished && (
+                          <Link href={`/${page.slug}`} target="_blank">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              title="View Live"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                        )}
                         <Link href={`/admin/pages/${page.id}`}>
                           <Button variant="ghost" size="icon" title="Edit">
                             <Pencil className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <form action={deletePage.bind(null, page.id)}>
-                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" title="Delete">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                        <form action={deletePageAction.bind(null, page.id)}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                            title="Delete"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </form>
                       </div>
                     </TableCell>

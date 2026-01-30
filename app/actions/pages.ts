@@ -152,6 +152,10 @@ export async function deletePage(id: string) {
   return { success: true };
 }
 
+export async function deletePageAction(id: string) {
+  await deletePage(id);
+}
+
 export async function togglePageStatus(id: string, isPublished: boolean) {
   try {
     const page = await prisma.page.update({

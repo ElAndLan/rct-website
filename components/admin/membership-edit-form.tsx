@@ -53,7 +53,7 @@ type MembershipApplication = {
   hideAddress: boolean;
   hidePhone: boolean;
   hideEmail: boolean;
-  familyMembers: string; // JSON string
+  familyMembers: string | null; // JSON string
   tier: string;
   amount: string;
   createdAt: Date;

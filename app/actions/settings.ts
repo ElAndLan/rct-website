@@ -35,6 +35,13 @@ export async function updateSiteSettings(formData: FormData) {
     const homeSectionTitle = formData.get("homeSectionTitle") as string;
     const homeSectionBody = formData.get("homeSectionBody") as string;
 
+    // Donation Section Fields
+    const donationImageFile = formData.get("donationImage") as File;
+    const donationImageUrlString = formData.get("donationImageUrl") as string;
+    const donationTitle = formData.get("donationTitle") as string;
+    const donationBody = formData.get("donationBody") as string;
+    const donationPaypalLink = formData.get("donationPaypalLink") as string;
+
     // --- Helper to process image upload/url ---
     async function processImage(
       file: File | null,
