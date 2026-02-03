@@ -122,7 +122,7 @@ export async function upsertAudition(
       },
     });
     revalidatePath(`/admin/auditions/${showId}`);
-    revalidateTag("auditions");
+    revalidateTag("auditions", "max");
     return { success: true, audition };
   } catch (error) {
     console.error("Error upserting audition:", error);
@@ -179,7 +179,7 @@ export async function generateAuditionSlots(
     // However, the admin page is /admin/auditions/[showId].
     // We can fetch the showId from auditionId if we really need to be precise,
     // or just revalidate the layout.
-    revalidateTag("auditions");
+    revalidateTag("auditions", "max");
 
     return { success: true, count: slotsData.length };
   } catch (error) {
@@ -223,7 +223,7 @@ export async function cancelAuditionBooking(attendeeId: string) {
     if (attendee.slot?.audition?.show?.slug) {
       revalidatePath(`/auditions/${attendee.slot.audition.show.slug}`);
     }
-    revalidateTag("auditions");
+    revalidateTag("auditions", "max");
 
     return { success: true, attendee };
   } catch (error) {

@@ -59,7 +59,7 @@ export default async function PreviousShowsPage() {
                     </Link>
                     {show.endDate && (
                       <Badge variant="secondary" className="shrink-0 text-xs font-normal">
-                        Ended {format(new Date(show.endDate), "MMM d, yyyy")}
+                        Final Date: {format(new Date(show.endDate), "MMM d, yyyy")}
                       </Badge>
                     )}
                   </CardTitle>
