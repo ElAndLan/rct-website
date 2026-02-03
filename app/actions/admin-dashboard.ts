@@ -86,7 +86,7 @@ export async function getAdminDashboardData() {
           name: `${m.firstName} ${m.lastName}`,
           email: m.email,
           subject: `Membership Application: ${m.tier}`,
-          preview: `Amount: $${m.amount} | Status: ${m.status || "Pending"}`,
+          preview: `Amount: $${m.amount}`,
           date: m.createdAt,
           details: {
             ...m,
