@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { HeroSlide } from "@prisma/client";
 
 interface HeroCarouselProps {
@@ -54,16 +55,19 @@ export function HeroCarousel({ slides = [] }: HeroCarouselProps) {
       }}
     >
       <CarouselContent>
-        {displaySlides.map((slide) => (
+        {displaySlides.map((slide, index) => (
           <CarouselItem key={slide.id}>
             <section className="relative h-[600px] flex items-center justify-center bg-zinc-900 text-white overflow-hidden">
               {/* Background Image */}
               <div className="absolute inset-0 z-0 opacity-40">
                 {slide.imageUrl ? (
-                  <img
+                  <Image
                     src={slide.imageUrl}
                     alt={slide.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="100vw"
+                    className="object-cover"
+                    priority={index === 0}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-red-900 to-zinc-950" />

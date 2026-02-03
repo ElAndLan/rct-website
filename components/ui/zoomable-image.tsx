@@ -8,6 +8,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface ZoomableImageProps {
   src: string;
@@ -20,13 +21,17 @@ export function ZoomableImage({ src, alt, className }: ZoomableImageProps) {
     <Dialog>
       <DialogTrigger asChild>
         <div
-          className={cn("cursor-zoom-in overflow-hidden rounded-xl", className)}
+          className={cn(
+            "cursor-zoom-in overflow-hidden rounded-xl relative",
+            className,
+          )}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={src}
             alt={alt}
-            className="w-full h-auto transition-transform duration-300 hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-300 hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
         </div>
       </DialogTrigger>

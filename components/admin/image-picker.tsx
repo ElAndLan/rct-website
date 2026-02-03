@@ -20,8 +20,9 @@ export function ImagePicker({ name, label = "Photo", defaultValue }: ImagePicker
   const [selectedLibraryImage, setSelectedLibraryImage] = useState<string | null>(null);
   const [isLoadingLibrary, setIsLoadingLibrary] = useState(false);
 
-  useEffect(() => {
-    if (activeTab === "library" && libraryImages.length === 0) {
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === "library" && libraryImages.length === 0) {
       setIsLoadingLibrary(true);
       getUploadedFiles()
         .then((files) => {
@@ -30,12 +31,12 @@ export function ImagePicker({ name, label = "Photo", defaultValue }: ImagePicker
         })
         .catch(() => setIsLoadingLibrary(false));
     }
-  }, [activeTab, libraryImages.length]);
+  };
 
   return (
     <div className="space-y-2">
       <Label>{label}</Label>
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="upload">Upload</TabsTrigger>
           <TabsTrigger value="url">URL</TabsTrigger>

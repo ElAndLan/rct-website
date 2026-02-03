@@ -3,6 +3,7 @@ import { getShowPerformances } from "@/app/actions/tickets";
 import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/layout/PublicLayout";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Calendar, Clock, MapPin } from "lucide-react";
 
@@ -21,12 +22,15 @@ export default async function ShowTicketsPage({ params }: PageProps) {
       <div className="container py-12">
         <div className="max-w-4xl mx-auto">
           <div className="grid md:grid-cols-[300px_1fr] gap-8 mb-12">
-            <div className="aspect-[2/3] bg-muted rounded-lg overflow-hidden">
+            <div className="aspect-[2/3] bg-muted rounded-lg overflow-hidden relative">
               {show.imageUrl && (
-                <img 
+                <Image 
                   src={show.imageUrl} 
                   alt={show.title} 
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 300px"
+                  priority
                 />
               )}
             </div>

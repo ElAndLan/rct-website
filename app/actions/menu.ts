@@ -12,26 +12,30 @@ export type MenuItemWithChildren = {
   children: MenuItemWithChildren[];
 };
 
-export async function getMenuItems(): Promise<MenuItemWithChildren[]> {
-  try {
-    const items = await prisma.menuItem.findMany({
-      orderBy: [{ order: "asc" }, { label: "asc" }],
-    });
+export const getMenuItems = unstable_cache(
+  async (): Promise<MenuItemWithChildren[]> => {
+    try {
+      const items = await prisma.menuItem.findMany({
+        orderBy: [{ order: "asc" }, { label: "asc" }],
+      });
 
-    // Reconstruct hierarchy
-    const rootItems = items.filter((item) => !item.parentId);
+      // Reconstruct hierarchy
+      const rootItems = items.filter((item) => !item.parentId);
 
-    return rootItems.map((root) => ({
-      ...root,
-      children: items
-        .filter((child) => child.parentId === root.id)
-        .map((child) => ({ ...child, children: [] })), // Only supporting 2 levels for now as requested
-    }));
-  } catch (error) {
-    console.error("Failed to fetch menu items:", error);
-    return [];
-  }
-}
+      return rootItems.map((root) => ({
+        ...root,
+        children: items
+          .filter((child) => child.parentId === root.id)
+          .map((child) => ({ ...child, children: [] })), // Only supporting 2 levels for now as requested
+      }));
+    } catch (error) {
+      console.error("Failed to fetch menu items:", error);
+      return [];
+    }
+  },
+  ["menu-items"],
+  { tags: ["menu-items"] },
+);
 
 export async function updateMenuOrder(items: { id: string; order: number }[]) {
   // Transaction to update all positions
@@ -45,6 +49,7 @@ export async function updateMenuOrder(items: { id: string; order: number }[]) {
   );
   revalidatePath("/", "layout"); // Refresh the frontend menu
   revalidatePath("/admin/menu");
+  revalidateTag("menu-items");
 }
 
 export async function createMenuItem(data: {
@@ -70,10 +75,12 @@ export async function createMenuItem(data: {
   });
   revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
+  revalidateTag("menu-items");
 }
 
 export async function deleteMenuItem(id: string) {
   await prisma.menuItem.delete({ where: { id } });
   revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
+  revalidateTag("menu-items");
 }

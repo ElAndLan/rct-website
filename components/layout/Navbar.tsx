@@ -1,16 +1,12 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getMenuItems } from "@/app/actions/menu";
 import { getSiteSettings } from "@/app/actions/settings";
 import { cn } from "@/lib/utils";
-import { Menu, ChevronDown } from "lucide-react";
+import { Menu } from "lucide-react";
+import { NavbarMenu } from "@/components/layout/NavbarMenu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 export async function Navbar() {
   const menuItems = await getMenuItems();
@@ -22,12 +18,17 @@ export async function Navbar() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 flex-shrink-0">
           {settings.logoUrl ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img
-              src={settings.logoUrl}
-              alt="Reading Civic Theatre"
-              className="h-16 w-auto object-contain"
-            />
+            <div className="relative h-16 w-auto">
+              <Image
+                src={settings.logoUrl}
+                alt="Reading Civic Theatre"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="h-16 w-auto object-contain"
+                priority
+              />
+            </div>
           ) : (
             <div className="bg-primary text-primary-foreground font-bold text-2xl px-3 py-1 rounded-sm">
               RCT
@@ -36,47 +37,7 @@ export async function Navbar() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex flex-1 justify-end ml-4">
-          <ul className="flex flex-wrap justify-end gap-1">
-            {menuItems.map((item) => (
-              <li key={item.id} className="flex items-center">
-                {item.children.length > 0 ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className="group inline-flex h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none transition-colors"
-                      >
-                        {item.label}
-                        <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      {item.children.map((child) => (
-                        <DropdownMenuItem key={child.id} asChild>
-                          <Link
-                            href={child.path || "#"}
-                            className="w-full cursor-pointer"
-                          >
-                            {child.label}
-                          </Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="h-9 w-max items-center justify-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground outline-none transition-colors"
-                  >
-                    <Link href={item.path || "#"}>{item.label}</Link>
-                  </Button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <NavbarMenu items={menuItems} />
 
         {/* Mobile Menu */}
         <div className="lg:hidden">
@@ -126,12 +87,14 @@ export async function Navbar() {
 
       {/* Header Banner Image */}
       {settings.headerBannerUrl && (
-        <div className="w-full border-t bg-background">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+        <div className="w-full border-t bg-background relative h-[100px]">
+          <Image
             src={settings.headerBannerUrl}
             alt="Header Banner"
-            className="w-full h-[100px] object-fill"
+            fill
+            className="object-fill"
+            priority
+            sizes="100vw"
           />
         </div>
       )}

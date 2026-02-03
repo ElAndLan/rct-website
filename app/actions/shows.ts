@@ -1,72 +1,126 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
-import { writeFile, unlink, mkdir } from "fs/promises";
 import path from "path";
-import { randomUUID } from "crypto";
-import { put } from "@vercel/blob";
+import { processAndSaveImage } from "./media";
 
 // --- Types ---
 export type ShowWithDetails = Awaited<ReturnType<typeof getShowById>>;
 
 // --- Fetch Actions ---
 
-export async function getShows() {
-  try {
-    return await prisma.show.findMany({
-      orderBy: { startDate: "desc" },
-    });
-  } catch (error) {
-    console.error("Failed to fetch shows:", error);
-    return [];
-  }
-}
+export const getShows = unstable_cache(
+  async () => {
+    try {
+      return await prisma.show.findMany({
+        orderBy: { startDate: "desc" },
+      });
+    } catch (error) {
+      console.error("Failed to fetch shows:", error);
+      return [];
+    }
+  },
+  ["shows-list"],
+  { tags: ["shows"] },
+);
 
-export async function getShowById(id: string) {
-  try {
-    return await prisma.show.findUnique({
-      where: { id },
-      include: {
-        cast: {
-          orderBy: { order: "asc" },
-        },
-        photos: {
-          orderBy: { order: "asc" },
-        },
-        performances: {
-          orderBy: { date: "asc" },
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Failed to fetch show:", error);
-    return null;
-  }
-}
+export const getCurrentShows = unstable_cache(
+  async () => {
+    try {
+      const today = new Date();
+      // Reset time to start of day for comparison
+      today.setHours(0, 0, 0, 0);
 
-export async function getShowBySlug(slug: string) {
-  try {
-    return await prisma.show.findUnique({
-      where: { slug },
-      include: {
-        cast: {
-          orderBy: { order: "asc" },
+      return await prisma.show.findMany({
+        where: {
+          OR: [{ endDate: { gte: today } }, { endDate: null }],
         },
-        photos: {
-          orderBy: { order: "asc" },
+        orderBy: { startDate: "asc" }, // Current/Upcoming usually asc order? Or desc? Let's keep desc for now or match user pref.
+        // Actually, upcoming shows usually listed soonest first.
+      });
+    } catch (error) {
+      console.error("Failed to fetch current shows:", error);
+      return [];
+    }
+  },
+  ["current-shows-list"],
+  { tags: ["shows"] },
+);
+
+export const getPreviousShows = unstable_cache(
+  async () => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      return await prisma.show.findMany({
+        where: {
+          endDate: { lt: today },
         },
-        performances: {
-          orderBy: { date: "asc" },
+        orderBy: { endDate: "desc" }, // Most recent past show first
+      });
+    } catch (error) {
+      console.error("Failed to fetch previous shows:", error);
+      return [];
+    }
+  },
+  ["previous-shows-list"],
+  { tags: ["shows"] },
+);
+
+export const getShowById = unstable_cache(
+  async (id: string) => {
+    try {
+      return await prisma.show.findUnique({
+        where: { id },
+        include: {
+          cast: {
+            orderBy: { order: "asc" },
+          },
+          photos: {
+            orderBy: { order: "asc" },
+          },
+          performances: {
+            orderBy: { date: "asc" },
+          },
         },
-      },
-    });
-  } catch (error) {
-    console.error("Failed to fetch show:", error);
-    return null;
-  }
-}
+      });
+    } catch (error) {
+      console.error("Failed to fetch show:", error);
+      return null;
+    }
+  },
+  ["show-by-id"],
+  { tags: ["shows"] },
+);
+
+export const getShowBySlug = unstable_cache(
+  async (slug: string) => {
+    try {
+      return await prisma.show.findUnique({
+        where: { slug },
+        include: {
+          cast: {
+            orderBy: { order: "asc" },
+          },
+          photos: {
+            orderBy: { order: "asc" },
+          },
+          performances: {
+            orderBy: { date: "asc" },
+          },
+        },
+      });
+    } catch (error) {
+      console.error("Failed to fetch show:", error);
+      return null;
+    }
+  },
+  ["show-by-slug"],
+  { tags: ["shows"] },
+);
 
 // --- Create/Update/Delete Show ---
 
@@ -100,6 +154,7 @@ export async function createShow(formData: FormData) {
   });
 
   revalidatePath("/admin/shows");
+  revalidateTag("shows");
   redirect("/admin/shows");
 }
 
@@ -143,6 +198,7 @@ export async function updateShow(id: string, formData: FormData) {
   revalidatePath(`/admin/shows/${id}`);
   revalidatePath("/admin/shows");
   revalidatePath(`/shows`); // Revalidate public pages
+  revalidateTag("shows");
 }
 
 export async function addPerformance(showId: string, formData: FormData) {
@@ -159,11 +215,13 @@ export async function addPerformance(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function deletePerformance(performanceId: string, showId: string) {
   await prisma.showPerformance.delete({ where: { id: performanceId } });
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function updateTicketPrice(showId: string, formData: FormData) {
@@ -175,43 +233,20 @@ export async function updateTicketPrice(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function deleteShow(id: string) {
   await prisma.show.delete({ where: { id } });
   revalidatePath("/admin/shows");
+  revalidateTag("shows");
 }
 
 // --- Photo Management ---
 
-async function saveBuffer(
-  buffer: Buffer,
-  originalFilename: string,
-): Promise<string> {
-  // Vercel Blob (Production)
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const filename = `${randomUUID()}-${originalFilename}`;
-    const blob = await put(filename, buffer, { access: "public" });
-    return blob.url;
-  }
-
-  // Local Filesystem (Development)
-  const filename = `${randomUUID()}${path.extname(originalFilename)}`;
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-  try {
-    await mkdir(uploadDir, { recursive: true });
-  } catch (error) {
-    // Ignore if directory exists
-  }
-
-  await writeFile(path.join(uploadDir, filename), buffer);
-  return `/uploads/${filename}`;
-}
-
 async function saveFile(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
-  return saveBuffer(buffer, file.name);
+  return processAndSaveImage(buffer, file.name);
 }
 
 async function saveUrl(url: string): Promise<string> {
@@ -235,7 +270,7 @@ async function saveUrl(url: string): Promise<string> {
     else ext = ".jpg"; // Fallback
   }
 
-  return saveBuffer(buffer, `download${ext}`);
+  return processAndSaveImage(buffer, `download${ext}`);
 }
 
 export async function uploadShowPhoto(showId: string, formData: FormData) {
@@ -267,6 +302,7 @@ export async function uploadShowPhoto(showId: string, formData: FormData) {
     });
 
     revalidatePath(`/admin/shows/${showId}`);
+    revalidateTag("shows");
     return { success: true };
   } catch (error) {
     console.error("Upload error:", error);
@@ -278,6 +314,7 @@ export async function deleteShowPhoto(photoId: string, showId: string) {
   // Ideally delete file from disk too, but for now just DB
   await prisma.showPhoto.delete({ where: { id: photoId } });
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function updateShowMainImage(showId: string, formData: FormData) {
@@ -304,6 +341,7 @@ export async function updateShowMainImage(showId: string, formData: FormData) {
       data: { imageUrl: url },
     });
     revalidatePath(`/admin/shows/${showId}`);
+    revalidateTag("shows");
     return { success: true };
   } catch (error) {
     return { error: "Upload failed" };
@@ -345,6 +383,7 @@ export async function addCastMember(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function updateCastMember(
@@ -379,9 +418,11 @@ export async function updateCastMember(
   });
 
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }
 
 export async function deleteCastMember(memberId: string, showId: string) {
   await prisma.castMember.delete({ where: { id: memberId } });
   revalidatePath(`/admin/shows/${showId}`);
+  revalidateTag("shows");
 }

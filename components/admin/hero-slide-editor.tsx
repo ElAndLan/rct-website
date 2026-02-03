@@ -158,10 +158,6 @@ export function HeroSlideEditor() {
     }),
   );
 
-  useEffect(() => {
-    loadSlides();
-  }, []);
-
   async function loadSlides() {
     setLoading(true);
     const result = await getHeroSlides();
@@ -172,6 +168,10 @@ export function HeroSlideEditor() {
     }
     setLoading(false);
   }
+
+  useEffect(() => {
+    loadSlides();
+  }, []);
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;

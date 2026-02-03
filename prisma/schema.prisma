@@ -372,3 +372,18 @@ model MembershipApplication {
   
   createdAt DateTime @default(now())
 }
+
+// Sponsors
+model Sponsor {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  imageUrl    String?
+  websiteUrl  String?
+  email       String?
+  phone       String?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

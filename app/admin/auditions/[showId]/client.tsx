@@ -212,7 +212,7 @@ export function AuditionManager({
         <CardHeader>
           <CardTitle>Audition Settings</CardTitle>
           <CardDescription>
-            Configure general information for this production's auditions.
+            Configure general information for this production&apos;s auditions.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -353,7 +353,7 @@ export function AuditionManager({
         <CardContent>
           {slots.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              No slots created yet. Click "Add Slots" to get started.
+              No slots created yet. Click &quot;Add Slots&quot; to get started.
             </div>
           ) : (
             <div className="space-y-6">

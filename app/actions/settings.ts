@@ -2,25 +2,27 @@
 
 import prisma from "@/lib/prisma";
 import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
-import { writeFile } from "fs/promises";
 import path from "path";
-import { randomUUID } from "crypto";
-import { put } from "@vercel/blob";
+import { processAndSaveImage } from "./media";
 
-export async function getSiteSettings() {
-  try {
-    const settings = await prisma.siteSettings.findMany();
-    return settings.reduce(
-      (acc, setting) => {
-        acc[setting.key] = setting.value;
-        return acc;
-      },
-      {} as Record<string, string>,
-    );
-  } catch (error) {
-    return {};
-  }
-}
+export const getSiteSettings = unstable_cache(
+  async () => {
+    try {
+      const settings = await prisma.siteSettings.findMany();
+      return settings.reduce(
+        (acc, setting) => {
+          acc[setting.key] = setting.value;
+          return acc;
+        },
+        {} as Record<string, string>,
+      );
+    } catch (error) {
+      return {};
+    }
+  },
+  ["site-settings"],
+  { tags: ["site-settings"] },
+);
 
 export async function updateSiteSettings(formData: FormData) {
   try {
@@ -81,20 +83,10 @@ export async function updateSiteSettings(formData: FormData) {
 
       // Handle file upload
       if (file && file.size > 0) {
-        if (process.env.BLOB_READ_WRITE_TOKEN) {
-          // Vercel Blob
-          const filename = `${prefix}-${randomUUID()}-${file.name}`;
-          const blob = await put(filename, file, { access: "public" });
-          finalUrl = blob.url;
-        } else {
-          // Local
-          const buffer = Buffer.from(await file.arrayBuffer());
-          const filename = `${prefix}-${randomUUID()}${path.extname(file.name)}`;
-          const uploadDir = path.join(process.cwd(), "public", "uploads");
-          await writeFile(path.join(uploadDir, filename), buffer);
-          finalUrl = `/uploads/${filename}`;
-        }
+        const buffer = Buffer.from(await file.arrayBuffer());
+        finalUrl = await processAndSaveImage(buffer, file.name);
       }
+
       return finalUrl;
     }
 
@@ -159,6 +151,7 @@ export async function updateSiteSettings(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/admin/settings");
     revalidatePath("/donate");
+    revalidateTag("site-settings");
     return { success: true };
   } catch (error) {
     console.error("Failed to update settings:", error);

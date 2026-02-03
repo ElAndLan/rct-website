@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { z } from "zod";
 
 const newsPostSchema = z.object({
@@ -13,30 +13,38 @@ const newsPostSchema = z.object({
 
 export type NewsPostData = z.infer<typeof newsPostSchema>;
 
-export async function getNewsPosts(includeUnpublished = false) {
-  try {
-    const posts = await prisma.newsPost.findMany({
-      where: includeUnpublished ? {} : { published: true },
-      orderBy: { createdAt: "desc" },
-    });
-    return { success: true, posts };
-  } catch (error) {
-    console.error("Failed to fetch news posts:", error);
-    return { success: false, error: "Failed to fetch news posts" };
-  }
-}
+export const getNewsPosts = unstable_cache(
+  async (includeUnpublished = false) => {
+    try {
+      const posts = await prisma.newsPost.findMany({
+        where: includeUnpublished ? {} : { published: true },
+        orderBy: { createdAt: "desc" },
+      });
+      return { success: true, posts };
+    } catch (error) {
+      console.error("Failed to fetch news posts:", error);
+      return { success: false, error: "Failed to fetch news posts" };
+    }
+  },
+  ["news-posts"],
+  { tags: ["news"] },
+);
 
-export async function getNewsPostBySlug(slug: string) {
-  try {
-    const post = await prisma.newsPost.findUnique({
-      where: { slug },
-    });
-    return { success: true, post };
-  } catch (error) {
-    console.error("Failed to fetch news post:", error);
-    return { success: false, error: "Failed to fetch news post" };
-  }
-}
+export const getNewsPostBySlug = unstable_cache(
+  async (slug: string) => {
+    try {
+      const post = await prisma.newsPost.findUnique({
+        where: { slug },
+      });
+      return { success: true, post };
+    } catch (error) {
+      console.error("Failed to fetch news post:", error);
+      return { success: false, error: "Failed to fetch news post" };
+    }
+  },
+  ["news-post-by-slug"],
+  { tags: ["news"] },
+);
 
 function generateSlug(title: string): string {
   return title
@@ -53,7 +61,7 @@ export async function createNewsPost(data: NewsPostData) {
     }
 
     let slug = generateSlug(result.data.title);
-    
+
     // Ensure unique slug
     let counter = 1;
     while (await prisma.newsPost.findUnique({ where: { slug } })) {
@@ -71,7 +79,7 @@ export async function createNewsPost(data: NewsPostData) {
     revalidatePath("/announcements");
     revalidatePath("/admin/announcements");
     revalidatePath("/"); // In case we show previews elsewhere
-    
+
     return { success: true, post };
   } catch (error) {
     console.error("Failed to create news post:", error);
@@ -97,7 +105,7 @@ export async function updateNewsPost(id: string, data: NewsPostData) {
     revalidatePath("/announcements");
     revalidatePath(`/announcements/${post.slug}`);
     revalidatePath("/admin/announcements");
-    
+
     return { success: true, post };
   } catch (error) {
     console.error("Failed to update news post:", error);
@@ -113,6 +121,7 @@ export async function deleteNewsPost(id: string) {
 
     revalidatePath("/announcements");
     revalidatePath("/admin/announcements");
+    revalidateTag("news");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete news post:", error);

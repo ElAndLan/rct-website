@@ -1,4 +1,3 @@
-import prisma from "@/lib/prisma";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,26 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { getPublicAuditions } from "@/app/actions/audition";
 
 export default async function PublicAuditionsPage() {
   // Fetch all shows that have active auditions
-  const showsWithAuditions = await prisma.show.findMany({
-    where: {
-      audition: {
-        isActive: true,
-      },
-    },
-    include: {
-      audition: {
-        include: {
-          slots: true,
-        },
-      },
-    },
-    orderBy: {
-      startDate: "asc",
-    },
-  });
+  const showsWithAuditions = await getPublicAuditions();
 
   return (
     <>
@@ -68,10 +53,12 @@ export default async function PublicAuditionsPage() {
                 >
                   <div className="aspect-video relative overflow-hidden rounded-t-lg bg-muted">
                     {show.imageUrl ? (
-                      <img
+                      <Image
                         src={show.imageUrl}
                         alt={show.title}
-                        className="object-cover w-full h-full"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="flex items-center justify-center w-full h-full bg-primary/10 text-primary/40">

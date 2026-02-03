@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Ticket, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { getHeroSlides } from "@/app/actions/hero-slides";
 import { getSiteSettings } from "@/app/actions/settings";
@@ -25,11 +26,14 @@ export default async function Home() {
               {/* Left: Image */}
               <div className="relative">
                 {settings.homeSectionImageUrl && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
+                  <Image
                     src={settings.homeSectionImageUrl}
                     alt={settings.homeSectionTitle || "Season Image"}
-                    className="w-full rounded-lg shadow-lg object-cover"
+                    width={0}
+                    height={0}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="w-full h-auto rounded-lg shadow-lg object-cover"
+                    priority
                   />
                 )}
               </div>

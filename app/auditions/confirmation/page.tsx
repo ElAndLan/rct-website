@@ -11,7 +11,7 @@ export default function ConfirmationPage() {
             <CheckCircle2 className="h-12 w-12 text-green-600" />
           </div>
         </div>
-        <h1 className="text-4xl font-bold mb-4">You're Signed Up!</h1>
+        <h1 className="text-4xl font-bold mb-4">You&apos;re Signed Up!</h1>
         <p className="text-xl text-muted-foreground max-w-lg mx-auto mb-8">
           Thank you for signing up to audition. We have sent a confirmation
           email with all the details. Break a leg!

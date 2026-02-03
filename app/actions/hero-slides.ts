@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { z } from "zod";
 
 const heroSlideSchema = z.object({
@@ -17,48 +17,53 @@ const heroSlideSchema = z.object({
 
 export type HeroSlideData = z.infer<typeof heroSlideSchema>;
 
-export async function getHeroSlides() {
-  try {
-    // Debugging Prisma Availability
-    if (!prisma) {
-      console.error("Prisma client is undefined in getHeroSlides");
-      return { success: false, error: "Database connection failed" };
-    }
-
-    // Check if heroSlide model exists on prisma instance
-    // @ts-ignore
-    if (!prisma.heroSlide) {
-      // Try to re-instantiate prisma if model is missing (hot reload issue?)
-      // This is a failsafe for development environment
-      if (process.env.NODE_ENV !== "production") {
-        console.warn(
-          "prisma.heroSlide missing, attempting to use global prisma...",
-        );
+export const getHeroSlides = unstable_cache(
+  async () => {
+    try {
+      // Debugging Prisma Availability
+      if (!prisma) {
+        console.error("Prisma client is undefined in getHeroSlides");
+        return { success: false, error: "Database connection failed" };
       }
 
-      console.error(
-        "prisma.heroSlide is undefined. Client generation might have failed.",
-      );
+      // Check if heroSlide model exists on prisma instance
+      // @ts-expect-error - Checking for model existence
+      if (!prisma.heroSlide) {
+        // Try to re-instantiate prisma if model is missing (hot reload issue?)
+        // This is a failsafe for development environment
+        if (process.env.NODE_ENV !== "production") {
+          console.warn(
+            "prisma.heroSlide missing, attempting to use global prisma...",
+          );
+        }
+
+        console.error(
+          "prisma.heroSlide is undefined. Client generation might have failed.",
+        );
+        return {
+          success: false,
+          error: "Database model not found. Please restart server.",
+        };
+      }
+
+      const slides = await prisma.heroSlide.findMany({
+        orderBy: {
+          order: "asc",
+        },
+      });
+      return { success: true, slides };
+    } catch (error) {
+      console.error("Failed to fetch hero slides:", error);
       return {
         success: false,
-        error: "Database model not found. Please restart server.",
+        error:
+          error instanceof Error ? error.message : "Failed to fetch slides",
       };
     }
-
-    const slides = await prisma.heroSlide.findMany({
-      orderBy: {
-        order: "asc",
-      },
-    });
-    return { success: true, slides };
-  } catch (error) {
-    console.error("Failed to fetch hero slides:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to fetch slides",
-    };
-  }
-}
+  },
+  ["hero-slides"],
+  { tags: ["hero-slides"] },
+);
 
 export async function createHeroSlide(data: HeroSlideData) {
   try {
@@ -82,6 +87,7 @@ export async function createHeroSlide(data: HeroSlideData) {
     });
 
     revalidatePath("/");
+    revalidateTag("hero-slides");
     return { success: true, slide };
   } catch (error) {
     console.error("Failed to create hero slide:", error);
@@ -123,6 +129,7 @@ export async function deleteHeroSlide(id: string) {
     });
 
     revalidatePath("/");
+    revalidateTag("hero-slides");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete hero slide:", error);

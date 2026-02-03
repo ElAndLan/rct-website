@@ -1,118 +1,110 @@
+import { Suspense } from "react";
+import { getAdminDashboardData } from "@/app/actions/admin-dashboard";
+import { DashboardMailbox } from "@/components/admin/dashboard-mailbox";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Ticket, Users, Mail, Activity } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Ticket, Users, Calendar, Megaphone } from "lucide-react"
+export default async function AdminDashboard() {
+  const { messages, activity, metrics } = await getAdminDashboardData();
 
-export default function AdminDashboard() {
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-      
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+      </div>
+
+      {/* Metrics Row */}
+      <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Upcoming Shows
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">Tickets Sold</CardTitle>
             <Ticket className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">2</div>
-            <p className="text-xs text-muted-foreground">
-              +1 from last month
-            </p>
+            <div className="text-2xl font-bold">{metrics.ticketsSold}</div>
+            <p className="text-xs text-muted-foreground">Lifetime total</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Auditions
+              Audition Signups
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
-            <p className="text-xs text-muted-foreground">
-              12 Signups today
-            </p>
+            <div className="text-2xl font-bold">{metrics.auditionSignups}</div>
+            <p className="text-xs text-muted-foreground">Lifetime total</p>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Members
+              Total Messages
             </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <Mail className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">245</div>
+            <div className="text-2xl font-bold">{metrics.totalMessages}</div>
             <p className="text-xs text-muted-foreground">
-              +18 this month
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              News Posts
-            </CardTitle>
-            <Megaphone className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">
-              Last post 2 days ago
+              Contact & Volunteer forms
             </p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-               {/* Placeholder for activity feed */}
-               <div className="flex items-center gap-4 text-sm">
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
-                  <p>New audition signup: <strong>Sarah Jones</strong> for <em>SpongeBob Musical</em></p>
-                  <span className="ml-auto text-muted-foreground text-xs">2m ago</span>
-               </div>
-               <div className="flex items-center gap-4 text-sm">
-                  <div className="h-2 w-2 rounded-full bg-blue-500" />
-                  <p>Page updated: <strong>About Us</strong></p>
-                  <span className="ml-auto text-muted-foreground text-xs">1h ago</span>
-               </div>
-               <div className="flex items-center gap-4 text-sm">
-                  <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                  <p>New sponsor added: <strong>Local Coffee Shop</strong></p>
-                  <span className="ml-auto text-muted-foreground text-xs">3h ago</span>
-               </div>
+      {/* Mailbox Section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Message Center</h2>
+        <DashboardMailbox messages={messages} />
+      </div>
+
+      {/* Recent Activity Section */}
+      <div>
+        <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
+        <Card>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {activity.length === 0 ? (
+                <div className="p-4 text-center text-muted-foreground">
+                  No recent activity found.
+                </div>
+              ) : (
+                activity.map((item) => (
+                  <div key={item.id} className="flex items-center p-4 gap-4">
+                    <div
+                      className={`h-9 w-9 rounded-full flex items-center justify-center shrink-0 ${
+                        item.type === "TICKET"
+                          ? "bg-green-100 text-green-600"
+                          : "bg-blue-100 text-blue-600"
+                      }`}
+                    >
+                      {item.type === "TICKET" ? (
+                        <Ticket size={18} />
+                      ) : (
+                        <Users size={18} />
+                      )}
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {item.description}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatDistanceToNow(new Date(item.date), {
+                          addSuffix: true,
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
-        
-        <Card className="col-span-3">
-           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common tasks</CardDescription>
-           </CardHeader>
-           <CardContent className="space-y-2">
-             <div className="p-3 border rounded-md hover:bg-muted cursor-pointer transition-colors flex items-center gap-2">
-                <Megaphone className="h-4 w-4" />
-                <span>Post News Announcement</span>
-             </div>
-             <div className="p-3 border rounded-md hover:bg-muted cursor-pointer transition-colors flex items-center gap-2">
-                <Ticket className="h-4 w-4" />
-                <span>Add New Show</span>
-             </div>
-           </CardContent>
-        </Card>
       </div>
     </div>
-  )
+  );
 }

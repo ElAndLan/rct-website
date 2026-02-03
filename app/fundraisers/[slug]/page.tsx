@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Calendar, MapPin, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
@@ -38,11 +39,14 @@ export default async function FundraiserDetailPage({ params }: PageProps) {
           <div className="lg:col-span-2 space-y-8">
             {fundraiser.imageUrl && (
               <div className="rounded-xl overflow-hidden border shadow-sm">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={fundraiser.imageUrl}
                   alt={fundraiser.title}
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 1024px) 100vw, 66vw"
                   className="w-full h-auto"
+                  priority
                 />
               </div>
             )}

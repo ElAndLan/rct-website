@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { z } from "zod";
 import { addMinutes, format, parse } from "date-fns";
 import { sendEmail } from "@/lib/mail";
@@ -36,6 +36,70 @@ const BookingSchema = z
     path: ["email"],
   });
 
+// --- Fetch Actions ---
+
+export const getPublicAuditions = unstable_cache(
+  async () => {
+    try {
+      const showsWithAuditions = await prisma.show.findMany({
+        where: {
+          audition: {
+            isActive: true,
+          },
+        },
+        include: {
+          audition: {
+            include: {
+              slots: true,
+            },
+          },
+        },
+        orderBy: {
+          startDate: "asc",
+        },
+      });
+      return showsWithAuditions;
+    } catch (error) {
+      console.error("Failed to fetch public auditions:", error);
+      return [];
+    }
+  },
+  ["public-auditions"],
+  { tags: ["auditions"] },
+);
+
+export const getAuditionBySlug = unstable_cache(
+  async (slug: string) => {
+    try {
+      const show = await prisma.show.findUnique({
+        where: { slug },
+        include: {
+          audition: {
+            include: {
+              slots: {
+                include: {
+                  _count: {
+                    select: { attendees: true },
+                  },
+                },
+                orderBy: {
+                  startTime: "asc",
+                },
+              },
+            },
+          },
+        },
+      });
+      return show;
+    } catch (error) {
+      console.error("Failed to fetch audition by slug:", error);
+      return null;
+    }
+  },
+  ["audition-by-slug"],
+  { tags: ["auditions"] },
+);
+
 // --- Admin Actions ---
 
 export async function upsertAudition(
@@ -58,6 +122,7 @@ export async function upsertAudition(
       },
     });
     revalidatePath(`/admin/auditions/${showId}`);
+    revalidateTag("auditions");
     return { success: true, audition };
   } catch (error) {
     console.error("Error upserting audition:", error);
@@ -114,6 +179,7 @@ export async function generateAuditionSlots(
     // However, the admin page is /admin/auditions/[showId].
     // We can fetch the showId from auditionId if we really need to be precise,
     // or just revalidate the layout.
+    revalidateTag("auditions");
 
     return { success: true, count: slotsData.length };
   } catch (error) {
@@ -157,6 +223,7 @@ export async function cancelAuditionBooking(attendeeId: string) {
     if (attendee.slot?.audition?.show?.slug) {
       revalidatePath(`/auditions/${attendee.slot.audition.show.slug}`);
     }
+    revalidateTag("auditions");
 
     return { success: true, attendee };
   } catch (error) {
@@ -252,7 +319,7 @@ export async function bookAuditionSlot(data: z.infer<typeof BookingSchema>) {
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = (error as any).errors[0];
+      const firstError = error.errors[0];
       return {
         success: false,
         error: firstError?.message || "Invalid input data",

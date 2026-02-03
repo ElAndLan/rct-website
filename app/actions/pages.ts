@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 
 // Helper to generate slug from title
@@ -12,41 +12,53 @@ function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
 }
 
-export async function getPages() {
-  try {
-    const pages = await prisma.page.findMany({
-      orderBy: { updatedAt: "desc" },
-    });
-    return { success: true, pages };
-  } catch (error) {
-    console.error("Error fetching pages:", error);
-    return { success: false, error: "Failed to fetch pages" };
-  }
-}
+export const getPages = unstable_cache(
+  async () => {
+    try {
+      const pages = await prisma.page.findMany({
+        orderBy: { updatedAt: "desc" },
+      });
+      return { success: true, pages };
+    } catch (error) {
+      console.error("Error fetching pages:", error);
+      return { success: false, error: "Failed to fetch pages" };
+    }
+  },
+  ["pages-list"],
+  { tags: ["pages"] },
+);
 
-export async function getPage(id: string) {
-  try {
-    const page = await prisma.page.findUnique({
-      where: { id },
-    });
-    return { success: true, page };
-  } catch (error) {
-    console.error("Error fetching page:", error);
-    return { success: false, error: "Failed to fetch page" };
-  }
-}
+export const getPage = unstable_cache(
+  async (id: string) => {
+    try {
+      const page = await prisma.page.findUnique({
+        where: { id },
+      });
+      return { success: true, page };
+    } catch (error) {
+      console.error("Error fetching page:", error);
+      return { success: false, error: "Failed to fetch page" };
+    }
+  },
+  ["page-by-id"],
+  { tags: ["pages"] },
+);
 
-export async function getPageBySlug(slug: string) {
-  try {
-    const page = await prisma.page.findUnique({
-      where: { slug },
-    });
-    return { success: true, page };
-  } catch (error) {
-    console.error("Error fetching page by slug:", error);
-    return { success: false, error: "Failed to fetch page" };
-  }
-}
+export const getPageBySlug = unstable_cache(
+  async (slug: string) => {
+    try {
+      const page = await prisma.page.findUnique({
+        where: { slug },
+      });
+      return { success: true, page };
+    } catch (error) {
+      console.error("Error fetching page by slug:", error);
+      return { success: false, error: "Failed to fetch page" };
+    }
+  },
+  ["page-by-slug"],
+  { tags: ["pages"] },
+);
 
 export async function createPage(formData: FormData) {
   const title = formData.get("title") as string;
@@ -89,6 +101,7 @@ export async function createPage(formData: FormData) {
   }
 
   revalidatePath("/admin/pages");
+  revalidateTag("pages");
   redirect("/admin/pages");
 }
 
@@ -135,6 +148,7 @@ export async function updatePage(id: string, formData: FormData) {
 
   revalidatePath("/admin/pages");
   revalidatePath(`/${slug}`); // Revalidate the public page
+  revalidateTag("pages");
   redirect("/admin/pages");
 }
 
@@ -149,6 +163,7 @@ export async function deletePage(id: string) {
   }
 
   revalidatePath("/admin/pages");
+  revalidateTag("pages");
   return { success: true };
 }
 
@@ -165,6 +180,7 @@ export async function togglePageStatus(id: string, isPublished: boolean) {
 
     revalidatePath("/admin/pages");
     revalidatePath(`/${page.slug}`);
+    revalidateTag("pages");
     return { success: true };
   } catch (error) {
     console.error("Error updating page status:", error);

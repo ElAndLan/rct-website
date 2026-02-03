@@ -1,13 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
-import { put } from "@vercel/blob";
+import { processAndSaveImage } from "./media";
 
 // --- Schemas ---
 
@@ -40,24 +37,8 @@ export type FundraiserWithEvents = Awaited<
 // --- Helper Functions ---
 
 async function saveFile(file: File): Promise<string> {
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    const filename = `${randomUUID()}-${file.name}`;
-    const blob = await put(filename, file, { access: "public" });
-    return blob.url;
-  }
-
-  const filename = `${randomUUID()}${path.extname(file.name)}`;
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-
-  try {
-    await mkdir(uploadDir, { recursive: true });
-  } catch (error) {
-    // ignore
-  }
-
   const buffer = Buffer.from(await file.arrayBuffer());
-  await writeFile(path.join(uploadDir, filename), buffer);
-  return `/uploads/${filename}`;
+  return processAndSaveImage(buffer, file.name);
 }
 
 async function processImageUpload(
@@ -141,11 +122,16 @@ export async function getFundraiserBySlug(slug: string) {
 
 // --- Mutation Actions ---
 
+interface EventInput {
+  startTime: string;
+  endTime?: string;
+}
+
 export async function createFundraiser(formData: FormData) {
   // Process Image
   const imageUrl = await processImageUpload(formData, "image");
 
-  const rawData: Record<string, any> = {
+  const rawData: Record<string, unknown> = {
     title: formData.get("title"),
     shortDescription: formData.get("shortDescription"),
     description: formData.get("description"),
@@ -170,7 +156,7 @@ export async function createFundraiser(formData: FormData) {
 
   // Generate slug
   const slug =
-    rawData.title
+    (rawData.title as string)
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^\w-]/g, "") +
@@ -180,20 +166,20 @@ export async function createFundraiser(formData: FormData) {
   try {
     await prisma.fundraiser.create({
       data: {
-        title: rawData.title,
+        title: rawData.title as string,
         slug,
-        shortDescription: rawData.shortDescription,
-        description: rawData.description,
-        locationName: rawData.locationName,
-        address: rawData.address,
-        city: rawData.city,
-        state: rawData.state,
-        zip: rawData.zip,
-        imageUrl: rawData.imageUrl,
-        isActive: rawData.isActive,
+        shortDescription: rawData.shortDescription as string,
+        description: rawData.description as string,
+        locationName: rawData.locationName as string,
+        address: rawData.address as string,
+        city: rawData.city as string,
+        state: rawData.state as string,
+        zip: rawData.zip as string,
+        imageUrl: rawData.imageUrl as string,
+        isActive: rawData.isActive as boolean,
         events: {
           create:
-            rawData.events?.map((e: any) => ({
+            (rawData.events as EventInput[])?.map((e) => ({
               startTime: new Date(e.startTime),
               endTime: e.endTime ? new Date(e.endTime) : null,
             })) || [],
@@ -214,7 +200,7 @@ export async function updateFundraiser(id: string, formData: FormData) {
   // Process Image
   const imageUrl = await processImageUpload(formData, "image");
 
-  const rawData: Record<string, any> = {
+  const rawData: Record<string, unknown> = {
     title: formData.get("title"),
     shortDescription: formData.get("shortDescription"),
     description: formData.get("description"),
@@ -232,7 +218,7 @@ export async function updateFundraiser(id: string, formData: FormData) {
 
   // Process events
   const eventsJson = formData.get("events") as string;
-  let eventsData = [];
+  let eventsData: EventInput[] = [];
   if (eventsJson) {
     try {
       eventsData = JSON.parse(eventsJson);
@@ -258,7 +244,7 @@ export async function updateFundraiser(id: string, formData: FormData) {
         });
 
         await tx.fundraiserEvent.createMany({
-          data: eventsData.map((e: any) => ({
+          data: eventsData.map((e) => ({
             fundraiserId: id,
             startTime: new Date(e.startTime),
             endTime: e.endTime ? new Date(e.endTime) : null,
@@ -274,6 +260,7 @@ export async function updateFundraiser(id: string, formData: FormData) {
   revalidatePath("/admin/fundraisers");
   revalidatePath("/fundraisers");
   revalidatePath(`/fundraisers/[slug]`); // This is tricky without the slug, but next.js handles generic paths
+  revalidateTag("fundraisers");
   redirect("/admin/fundraisers");
 }
 
@@ -284,6 +271,7 @@ export async function deleteFundraiser(id: string) {
     });
     revalidatePath("/admin/fundraisers");
     revalidatePath("/fundraisers");
+    revalidateTag("fundraisers");
   } catch (error) {
     console.error("Failed to delete fundraiser:", error);
     throw new Error("Failed to delete fundraiser");

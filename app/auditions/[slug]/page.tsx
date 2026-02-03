@@ -1,7 +1,7 @@
-import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { PublicAuditionClient } from "./client";
 import { Metadata } from "next";
+import { getAuditionBySlug } from "@/app/actions/audition";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -9,9 +9,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const show = await prisma.show.findUnique({
-    where: { slug },
-  });
+  const show = await getAuditionBySlug(slug);
 
   if (!show) return { title: "Auditions Not Found" };
 
@@ -24,22 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PublicAuditionPage({ params }: Props) {
   const { slug } = await params;
 
-  const show = await prisma.show.findUnique({
-    where: { slug },
-    include: {
-      audition: {
-        include: {
-          slots: {
-            include: {
-              _count: {
-                select: { attendees: true },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
+  const show = await getAuditionBySlug(slug);
 
   if (!show || !show.audition || !show.audition.isActive) {
     notFound();

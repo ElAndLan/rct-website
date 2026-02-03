@@ -159,6 +159,10 @@ export async function createOrder(
 
     // 3. Send Email (After transaction commits)
     const { order, performance, seats } = result;
+
+    // Invalidate cache for this performance
+    revalidateTag("tickets");
+
     const dateStr = new Date(performance.date).toLocaleString();
 
     const emailHtml = `

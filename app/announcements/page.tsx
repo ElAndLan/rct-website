@@ -1,6 +1,7 @@
 import PublicLayout from "@/components/layout/PublicLayout";
 import { getNewsPosts } from "@/app/actions/news";
 import Link from "next/link";
+import Image from "next/image";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,11 +30,12 @@ export default async function AnnouncementsPage() {
                 {post.imageUrl && (
                   <div className="md:w-1/3 shrink-0">
                     <div className="aspect-video relative rounded-md overflow-hidden bg-muted">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={post.imageUrl}
                         alt={post.title}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                       />
                     </div>
                   </div>

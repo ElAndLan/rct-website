@@ -3,6 +3,7 @@ import { getSiteSettings } from "@/app/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export const metadata = {
   title: "Donate | Reading Civic Theatre",
@@ -25,11 +26,12 @@ export default async function DonatePage() {
                 {/* Image Section */}
                 <div className="bg-muted relative min-h-[300px] md:min-h-full">
                     {imageUrl ? (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img
+                        <Image
                             src={imageUrl}
                             alt="Donate to RCT"
-                            className="absolute inset-0 w-full h-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 50vw"
                         />
                     ) : (
                         <div className="absolute inset-0 flex items-center justify-center bg-primary/10 text-primary">

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Ticket, FileText, Calendar, MapPin, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { ZoomableImage } from "@/components/ui/zoomable-image";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -39,11 +40,13 @@ export default async function ShowDetailPage({
       {/* Banner Section */}
       <div className="w-full h-[400px] md:h-[600px] relative bg-muted">
         {show.imageUrl ? (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
+          <Image
             src={show.imageUrl}
             alt={show.title}
-            className="w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xl">
@@ -150,13 +153,14 @@ export default async function ShowDetailPage({
                   key={member.id}
                   className="bg-card border rounded-lg p-4 flex flex-col items-center text-center hover:shadow-md transition-shadow"
                 >
-                  <div className="w-24 h-24 mb-3 rounded-full overflow-hidden bg-muted shadow-sm">
+                  <div className="w-24 h-24 mb-3 rounded-full overflow-hidden bg-muted shadow-sm relative">
                     {member.imageUrl ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
+                      <Image
                         src={member.imageUrl}
                         alt={member.name}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="object-cover"
+                        sizes="96px"
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground bg-secondary">

@@ -16,7 +16,7 @@ async function backup() {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const backupFile = path.join(backupDir, `backup-${timestamp}.json`);
 
-  const data: any = {};
+  const data: Record<string, object[]> = {};
 
   // Backup all models
   console.log('Backing up Users...');

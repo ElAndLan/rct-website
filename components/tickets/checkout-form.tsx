@@ -54,9 +54,14 @@ const getCardType = (number: string) => {
   return "Unknown";
 };
 
+interface TicketSelection {
+  performanceId: string;
+  seatIds: string[];
+}
+
 export function CheckoutForm() {
   const router = useRouter();
-  const [selection, setSelection] = useState<any>(null);
+  const [selection, setSelection] = useState<TicketSelection | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,7 +89,8 @@ export function CheckoutForm() {
   }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let { name, value } = e.target;
+    const { name } = e.target;
+    let { value } = e.target;
 
     if (name === "cardNumber") {
       value = formatCardNumber(value);
@@ -147,7 +153,7 @@ export function CheckoutForm() {
       } else {
         setError(result.error || "Payment processing failed.");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);

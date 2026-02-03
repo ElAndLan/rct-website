@@ -2,6 +2,7 @@
 import { getShows } from "@/app/actions/shows";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import Link from "next/link";
 import { CalendarDays } from "lucide-react";
 import PublicLayout from "@/components/layout/PublicLayout";
@@ -25,10 +26,12 @@ export default async function TicketsPage() {
               <Card key={show.id} className="flex flex-col overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-video bg-muted relative">
                   {show.imageUrl ? (
-                    <img 
+                    <Image 
                       src={show.imageUrl} 
                       alt={show.title} 
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
