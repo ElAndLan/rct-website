@@ -2,8 +2,9 @@ import { getPage } from "@/app/actions/pages";
 import { PageForm } from "@/components/admin/page-form";
 import { notFound } from "next/navigation";
 
-export default async function EditPage({ params }: { params: { id: string } }) {
-  const result = await getPage(params.id);
+export default async function EditPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const result = await getPage(id);
   
   if (!result.success || !result.page) {
     notFound();

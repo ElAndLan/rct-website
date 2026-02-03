@@ -35,6 +35,9 @@ export async function getShowById(id: string) {
         photos: {
           orderBy: { order: "asc" },
         },
+        performances: {
+          orderBy: { date: "asc" },
+        },
       },
     });
   } catch (error) {
@@ -53,6 +56,9 @@ export async function getShowBySlug(slug: string) {
         },
         photos: {
           orderBy: { order: "asc" },
+        },
+        performances: {
+          orderBy: { date: "asc" },
         },
       },
     });
@@ -137,6 +143,38 @@ export async function updateShow(id: string, formData: FormData) {
   revalidatePath(`/admin/shows/${id}`);
   revalidatePath("/admin/shows");
   revalidatePath(`/shows`); // Revalidate public pages
+}
+
+export async function addPerformance(showId: string, formData: FormData) {
+  const dateStr = formData.get("date") as string;
+  if (!dateStr) return;
+
+  const date = new Date(dateStr);
+
+  await prisma.showPerformance.create({
+    data: {
+      showId,
+      date,
+    },
+  });
+
+  revalidatePath(`/admin/shows/${showId}`);
+}
+
+export async function deletePerformance(performanceId: string, showId: string) {
+  await prisma.showPerformance.delete({ where: { id: performanceId } });
+  revalidatePath(`/admin/shows/${showId}`);
+}
+
+export async function updateTicketPrice(showId: string, formData: FormData) {
+  const price = formData.get("ticketPrice");
+
+  await prisma.show.update({
+    where: { id: showId },
+    data: { ticketPrice: Number(price) },
+  });
+
+  revalidatePath(`/admin/shows/${showId}`);
 }
 
 export async function deleteShow(id: string) {

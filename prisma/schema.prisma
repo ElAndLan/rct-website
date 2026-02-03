@@ -111,12 +111,71 @@ model Show {
   programPdfUrl   String?    // Option A: Uploaded PDF URL
   programContent  String?    // Option B: Digital Program Content
   
+  ticketPrice     Decimal?   @default(0.00)
+  
   cast            CastMember[]
   photos          ShowPhoto[]
+  performances    ShowPerformance[]
   audition        Audition? // One audition configuration per show
   
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+}
+
+model Seat {
+  id          String   @id @default(cuid())
+  row         String   // A, B, ... K
+  number      Int      // 1, 2, ...
+  category    String   @default("STANDARD") // STANDARD, ACCESSIBLE
+  isReserved  Boolean  @default(false) // For house seats if needed
+  
+  tickets     Ticket[]
+  
+  @@unique([row, number])
+}
+
+model ShowPerformance {
+  id        String   @id @default(cuid())
+  showId    String
+  show      Show     @relation(fields: [showId], references: [id], onDelete: Cascade)
+  date      DateTime
+  
+  tickets   Ticket[]
+}
+
+model Ticket {
+  id            String          @id @default(cuid())
+  performanceId String
+  performance   ShowPerformance @relation(fields: [performanceId], references: [id], onDelete: Cascade)
+  seatId        String
+  seat          Seat            @relation(fields: [seatId], references: [id])
+  orderId       String?
+  order         Order?          @relation(fields: [orderId], references: [id])
+  
+  status        String          @default("AVAILABLE") // AVAILABLE, HELD, SOLD
+  pricePaid     Decimal?
+  
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([performanceId, seatId]) // One ticket per seat per performance
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  
+  totalAmount     Decimal
+  status          String   @default("PENDING") // PENDING, PAID, FAILED
+  paymentIntentId String?  // For tracking the fake payment
+  last4           String?  // Last 4 digits of the card
+  
+  tickets         Ticket[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model CastMember {
@@ -214,13 +273,13 @@ model NewsPost {
 
 // Contact Form Submissions
 model ContactSubmission {
-  id            String   @id @default(cuid())
-  name          String
-  contactMethod String
-  contactValue  String
-  subject       String
-  message       String
-  createdAt     DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
 }
 
 // Global Site Settings

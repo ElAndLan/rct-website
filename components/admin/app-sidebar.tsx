@@ -10,6 +10,9 @@ import {
   Shield,
   Image as ImageIcon,
   HeartHandshake,
+  CreditCard,
+  Mail,
+  ChevronDown,
 } from "lucide-react";
 import {
   Sidebar,
@@ -24,69 +27,119 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-// Menu items.
-const items = [
+// Menu groups
+const groups = [
   {
-    title: "Dashboard",
-    url: "/admin",
-    icon: LayoutDashboard,
+    label: "Overview",
+    items: [
+      {
+        title: "Dashboard",
+        url: "/admin",
+        icon: LayoutDashboard,
+      },
+    ],
   },
   {
-    title: "Shows & Programs",
-    url: "/admin/shows",
-    icon: Ticket,
+    label: "Show Management",
+    items: [
+      {
+        title: "Shows & Programs",
+        url: "/admin/shows",
+        icon: Ticket,
+      },
+      {
+        title: "Ticket Orders",
+        url: "/admin/orders",
+        icon: CreditCard,
+      },
+      {
+        title: "Auditions",
+        url: "/admin/auditions",
+        icon: Users,
+      },
+      {
+        title: "Volunteers",
+        url: "/admin/volunteers",
+        icon: HeartHandshake,
+      },
+    ],
   },
   {
-    title: "Hero Carousel",
-    url: "/admin/hero",
-    icon: ImageIcon,
+    label: "Content Management",
+    items: [
+      {
+        title: "Pages",
+        url: "/admin/pages",
+        icon: FileText,
+      },
+      {
+        title: "Menu Manager",
+        url: "/admin/menu",
+        icon: Menu,
+      },
+      {
+        title: "Hero Carousel",
+        url: "/admin/hero",
+        icon: ImageIcon,
+      },
+      {
+        title: "Home Content",
+        url: "/admin/home-content",
+        icon: LayoutDashboard,
+      },
+      {
+        title: "Announcements",
+        url: "/admin/announcements",
+        icon: Megaphone,
+      },
+      {
+        title: "Contact Info",
+        url: "/admin/contact-info",
+        icon: Mail,
+      },
+      {
+        title: "Sponsors",
+        url: "/admin/sponsors",
+        icon: CalendarDays,
+      },
+    ],
   },
   {
-    title: "Auditions",
-    url: "/admin/auditions",
-    icon: Users,
+    label: "Fundraising & Members",
+    items: [
+      {
+        title: "Donation Page",
+        url: "/admin/donations",
+        icon: HeartHandshake,
+      },
+      {
+        title: "Fundraisers",
+        url: "/admin/fundraisers",
+        icon: HeartHandshake,
+      },
+      {
+        title: "Memberships",
+        url: "/admin/memberships",
+        icon: Users,
+      },
+    ],
   },
   {
-    title: "Volunteers",
-    url: "/admin/volunteers",
-    icon: HeartHandshake,
-  },
-  {
-    title: "Menu Manager",
-    url: "/admin/menu",
-    icon: Menu,
-  },
-  {
-    title: "Pages",
-    url: "/admin/pages",
-    icon: FileText,
-  },
-  {
-    title: "Announcements",
-    url: "/admin/announcements",
-    icon: Megaphone,
-  },
-  {
-    title: "Sponsors",
-    url: "/admin/sponsors",
-    icon: CalendarDays,
-  },
-  {
-    title: "Fundraisers",
-    url: "/admin/fundraisers",
-    icon: HeartHandshake,
-  },
-  {
-    title: "Memberships",
-    url: "/admin/memberships",
-    icon: Users,
-  },
-  {
-    title: "Settings",
-    url: "/admin/settings",
-    icon: Settings,
+    label: "System",
+    items: [
+      {
+        title: "Settings",
+        url: "/admin/settings",
+        icon: Settings,
+      },
+    ],
   },
 ];
 
@@ -102,23 +155,38 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {groups.map((group) => (
+          <Collapsible
+            key={group.label}
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel asChild>
+                <CollapsibleTrigger>
+                  {group.label}
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {group.items.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton asChild tooltip={item.title}>
+                          <a href={item.url}>
+                            <item.icon />
+                            <span>{item.title}</span>
+                          </a>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        ))}
       </SidebarContent>
       <SidebarFooter className="p-4 border-t border-sidebar-border">
         <div className="flex items-center gap-3">

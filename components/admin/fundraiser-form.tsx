@@ -9,8 +9,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { ImagePicker } from "@/components/admin/image-picker";
 import { Plus, Trash2, Calendar } from "lucide-react";
-import { FundraiserWithEvents, createFundraiser, updateFundraiser } from "@/app/actions/fundraisers";
+import {
+  FundraiserWithEvents,
+  createFundraiser,
+  updateFundraiser,
+} from "@/app/actions/fundraisers";
 import { format } from "date-fns";
+import { formatZipCode } from "@/lib/formatters";
 
 interface FundraiserFormProps {
   initialData?: FundraiserWithEvents;
@@ -18,11 +23,13 @@ interface FundraiserFormProps {
 
 export function FundraiserForm({ initialData }: FundraiserFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [events, setEvents] = useState<{ startTime: string; endTime: string }[]>(
+  const [events, setEvents] = useState<
+    { startTime: string; endTime: string }[]
+  >(
     initialData?.events.map((e) => ({
       startTime: new Date(e.startTime).toISOString().slice(0, 16), // datetime-local format
       endTime: e.endTime ? new Date(e.endTime).toISOString().slice(0, 16) : "",
-    })) || []
+    })) || [],
   );
 
   const addEvent = () => {
@@ -33,7 +40,11 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
     setEvents(events.filter((_, i) => i !== index));
   };
 
-  const updateEvent = (index: number, field: "startTime" | "endTime", value: string) => {
+  const updateEvent = (
+    index: number,
+    field: "startTime" | "endTime",
+    value: string,
+  ) => {
     const newEvents = [...events];
     newEvents[index] = { ...newEvents[index], [field]: value };
     setEvents(newEvents);
@@ -43,7 +54,7 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
     setIsSubmitting(true);
     // Add events as JSON
     formData.set("events", JSON.stringify(events));
-    
+
     try {
       if (initialData) {
         await updateFundraiser(initialData.id, formData);
@@ -114,16 +125,21 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
               <h3 className="font-semibold flex items-center gap-2">
                 <Calendar className="h-4 w-4" /> Schedule
               </h3>
-              
+
               <div className="space-y-4">
                 {events.map((event, index) => (
-                  <div key={index} className="flex gap-2 items-end border p-3 rounded-md bg-muted/20">
+                  <div
+                    key={index}
+                    className="flex gap-2 items-end border p-3 rounded-md bg-muted/20"
+                  >
                     <div className="flex-1 space-y-1">
                       <Label className="text-xs">Start Time</Label>
                       <Input
                         type="datetime-local"
                         value={event.startTime}
-                        onChange={(e) => updateEvent(index, "startTime", e.target.value)}
+                        onChange={(e) =>
+                          updateEvent(index, "startTime", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -132,7 +148,9 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
                       <Input
                         type="datetime-local"
                         value={event.endTime}
-                        onChange={(e) => updateEvent(index, "endTime", e.target.value)}
+                        onChange={(e) =>
+                          updateEvent(index, "endTime", e.target.value)
+                        }
                       />
                     </div>
                     <Button
@@ -146,8 +164,14 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
                     </Button>
                   </div>
                 ))}
-                
-                <Button type="button" variant="outline" size="sm" onClick={addEvent} className="w-full">
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addEvent}
+                  className="w-full"
+                >
                   <Plus className="mr-2 h-4 w-4" /> Add Date/Time
                 </Button>
               </div>
@@ -158,9 +182,9 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
         <div className="space-y-6">
           <Card>
             <CardContent className="pt-6 space-y-4">
-              <ImagePicker 
-                name="image" 
-                label="Cover Image" 
+              <ImagePicker
+                name="image"
+                label="Cover Image"
                 defaultValue={initialData?.imageUrl}
               />
             </CardContent>
@@ -169,7 +193,7 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
           <Card>
             <CardContent className="pt-6 space-y-4">
               <h3 className="font-semibold">Location Details</h3>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="locationName">Location Name</Label>
                 <Input
@@ -215,6 +239,9 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
                   id="zip"
                   name="zip"
                   defaultValue={initialData?.zip || ""}
+                  onChange={(e) => {
+                    e.target.value = formatZipCode(e.target.value);
+                  }}
                 />
               </div>
             </CardContent>
@@ -223,11 +250,19 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
       </div>
 
       <div className="flex justify-end gap-4">
-        <Button type="button" variant="outline" onClick={() => window.history.back()}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => window.history.back()}
+        >
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Saving..." : initialData ? "Update Fundraiser" : "Create Fundraiser"}
+          {isSubmitting
+            ? "Saving..."
+            : initialData
+              ? "Update Fundraiser"
+              : "Create Fundraiser"}
         </Button>
       </div>
     </form>

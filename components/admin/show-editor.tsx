@@ -11,6 +11,9 @@ import {
   uploadShowPhoto,
   deleteShowPhoto,
   updateShowMainImage,
+  addPerformance,
+  deletePerformance,
+  updateTicketPrice,
 } from "@/app/actions/shows";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +52,7 @@ interface ShowEditorProps {
 
 export function ShowEditor({ show }: ShowEditorProps) {
   const [activeTab, setActiveTab] = useState<
-    "details" | "cast" | "photos" | "program"
+    "details" | "cast" | "photos" | "program" | "ticketing"
   >("details");
   const [isUploading, setIsUploading] = useState(false);
   const [editingMember, setEditingMember] = useState<
@@ -127,6 +130,12 @@ export function ShowEditor({ show }: ShowEditorProps) {
           onClick={() => setActiveTab("program")}
         >
           Program
+        </Button>
+        <Button
+          variant={activeTab === "ticketing" ? "default" : "ghost"}
+          onClick={() => setActiveTab("ticketing")}
+        >
+          Ticketing
         </Button>
       </div>
 
@@ -543,6 +552,117 @@ export function ShowEditor({ show }: ShowEditorProps) {
                   <Save className="w-4 h-4 mr-2" /> Save Program
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TICKETING TAB */}
+      {activeTab === "ticketing" && (
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Ticket Settings</CardTitle>
+              <CardDescription>
+                Set the base ticket price for this show.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                action={updateTicketPrice.bind(null, show.id)}
+                className="flex items-end gap-4"
+              >
+                <div className="space-y-2 flex-1">
+                  <Label htmlFor="ticketPrice">Ticket Price ($)</Label>
+                  <Input
+                    id="ticketPrice"
+                    name="ticketPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    defaultValue={Number(show.ticketPrice) || 0}
+                    required
+                  />
+                </div>
+                <Button type="submit">
+                  <Save className="w-4 h-4 mr-2" /> Update Price
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Performances</CardTitle>
+              <CardDescription>
+                Manage the specific dates and times for this show.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date & Time</TableHead>
+                    <TableHead className="w-[100px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {show.performances?.map((perf) => (
+                    <TableRow key={perf.id}>
+                      <TableCell>
+                        {new Date(perf.date).toLocaleString([], {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "2-digit",
+                        })}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => deletePerformance(perf.id, show.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {(!show.performances || show.performances.length === 0) && (
+                    <TableRow>
+                      <TableCell
+                        colSpan={2}
+                        className="text-center text-muted-foreground"
+                      >
+                        No performances added yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+
+              <div className="border-t mt-4 pt-4">
+                <h4 className="text-sm font-medium mb-2">Add Performance</h4>
+                <form
+                  action={addPerformance.bind(null, show.id)}
+                  className="flex items-end gap-4"
+                >
+                  <div className="space-y-2 flex-1">
+                    <Label htmlFor="perf-date">Date & Time</Label>
+                    <Input
+                      id="perf-date"
+                      name="date"
+                      type="datetime-local"
+                      required
+                    />
+                  </div>
+                  <Button type="submit">
+                    <Plus className="w-4 h-4 mr-2" /> Add Date
+                  </Button>
+                </form>
+              </div>
             </CardContent>
           </Card>
         </div>

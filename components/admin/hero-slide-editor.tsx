@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useId } from "react";
 import {
   DndContext,
   closestCenter,
@@ -148,6 +148,8 @@ export function HeroSlideEditor() {
     secondaryLinkUrl: "",
     isActive: true,
   });
+
+  const dndContextId = useId();
 
   const sensors = useSensors(
     useSensor(PointerSensor),

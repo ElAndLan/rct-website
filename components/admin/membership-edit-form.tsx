@@ -22,6 +22,7 @@ import { format } from "date-fns";
 import { Plus, Trash2, Save, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { formatPhoneNumber, formatZipCode } from "@/lib/formatters";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -82,6 +83,11 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
     useState<{ name: string; birthDate: string }[]>(initialFamilyMembers);
   const [selectedTier, setSelectedTier] = useState(application.tier);
   const [amount, setAmount] = useState(application.amount || "0");
+
+  // Formatted Fields State
+  const [phoneHome, setPhoneHome] = useState(application.phoneHome || "");
+  const [phoneCell, setPhoneCell] = useState(application.phoneCell || "");
+  const [zip, setZip] = useState(application.zip || "");
 
   // Privacy toggles
   const [hideAddress, setHideAddress] = useState(application.hideAddress);
@@ -293,7 +299,8 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
                   <Input
                     id="zip"
                     name="zip"
-                    defaultValue={application.zip || ""}
+                    value={zip}
+                    onChange={(e) => setZip(formatZipCode(e.target.value))}
                   />
                 </div>
               </div>
@@ -304,7 +311,10 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
                   <Input
                     id="phoneHome"
                     name="phoneHome"
-                    defaultValue={application.phoneHome || ""}
+                    value={phoneHome}
+                    onChange={(e) =>
+                      setPhoneHome(formatPhoneNumber(e.target.value))
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -312,7 +322,10 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
                   <Input
                     id="phoneCell"
                     name="phoneCell"
-                    defaultValue={application.phoneCell || ""}
+                    value={phoneCell}
+                    onChange={(e) =>
+                      setPhoneCell(formatPhoneNumber(e.target.value))
+                    }
                   />
                 </div>
               </div>

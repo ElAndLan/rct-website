@@ -46,9 +46,10 @@ export default async function CustomPage({ params }: Props) {
           </header>
           
           <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-primary prose-a:no-underline hover:prose-a:underline">
-            <div className="whitespace-pre-wrap font-sans">
-              {page.content}
-            </div>
+            <div 
+              className="font-sans"
+              dangerouslySetInnerHTML={{ __html: page.content }}
+            />
           </div>
 
           {/* Special Injection for Membership Page */}

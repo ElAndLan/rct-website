@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { formatPhoneNumber } from "@/lib/formatters";
 import {
   Card,
   CardContent,
@@ -42,6 +43,7 @@ const TIMES = ["Any", "Morning", "Afternoon", "Evening"];
 
 export default function VolunteerPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phone, setPhone] = useState("");
   const [availability, setAvailability] = useState<Record<string, string[]>>(
     {},
   );
@@ -111,6 +113,7 @@ export default function VolunteerPage() {
       const form = document.getElementById("volunteer-form") as HTMLFormElement;
       form.reset();
       setAvailability({});
+      setPhone("");
     } else {
       toast.error(result.error || "Something went wrong.");
     }
@@ -125,16 +128,12 @@ export default function VolunteerPage() {
             Volunteer With Us
           </CardTitle>
           <CardDescription className="text-center text-lg mt-2">
-            Join our community! We are always looking for passionate
-            individuals to help bring our productions to life.
+            Join our community! We are always looking for passionate individuals
+            to help bring our productions to life.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            id="volunteer-form"
-            action={handleSubmit}
-            className="space-y-8"
-          >
+          <form id="volunteer-form" action={handleSubmit} className="space-y-8">
             {/* Contact Info */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold border-b pb-2">
@@ -168,6 +167,10 @@ export default function VolunteerPage() {
                     name="phoneNumber"
                     type="tel"
                     placeholder="(555) 123-4567"
+                    value={phone}
+                    onChange={(e) =>
+                      setPhone(formatPhoneNumber(e.target.value))
+                    }
                   />
                 </div>
               </div>
@@ -178,9 +181,7 @@ export default function VolunteerPage() {
 
             {/* About You */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold border-b pb-2">
-                About You
-              </h3>
+              <h3 className="text-lg font-semibold border-b pb-2">About You</h3>
 
               <div className="space-y-2">
                 <Label htmlFor="about">Tell us about yourself</Label>
@@ -270,10 +271,7 @@ export default function VolunteerPage() {
                 {VOLUNTEER_ROLES.map((role) => (
                   <div key={role} className="flex items-center space-x-2">
                     <Checkbox id={`role-${role}`} name="roles" value={role} />
-                    <Label
-                      htmlFor={`role-${role}`}
-                      className="cursor-pointer"
-                    >
+                    <Label htmlFor={`role-${role}`} className="cursor-pointer">
                       {role}
                     </Label>
                   </div>
@@ -284,9 +282,7 @@ export default function VolunteerPage() {
             {/* Additional Comments */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="additionalComments">
-                  Additional Comments
-                </Label>
+                <Label htmlFor="additionalComments">Additional Comments</Label>
                 <Textarea
                   id="additionalComments"
                   name="additionalComments"

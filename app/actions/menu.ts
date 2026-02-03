@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 
 export type MenuItemWithChildren = {
   id: string;
@@ -15,7 +15,7 @@ export type MenuItemWithChildren = {
 export async function getMenuItems(): Promise<MenuItemWithChildren[]> {
   try {
     const items = await prisma.menuItem.findMany({
-      orderBy: { order: "asc" },
+      orderBy: [{ order: "asc" }, { label: "asc" }],
     });
 
     // Reconstruct hierarchy
@@ -43,7 +43,7 @@ export async function updateMenuOrder(items: { id: string; order: number }[]) {
       }),
     ),
   );
-  revalidatePath("/"); // Refresh the frontend menu
+  revalidatePath("/", "layout"); // Refresh the frontend menu
   revalidatePath("/admin/menu");
 }
 
@@ -68,12 +68,12 @@ export async function createMenuItem(data: {
       order: newOrder,
     },
   });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
 }
 
 export async function deleteMenuItem(id: string) {
   await prisma.menuItem.delete({ where: { id } });
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
 }

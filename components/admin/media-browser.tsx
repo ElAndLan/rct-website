@@ -62,16 +62,20 @@ export function MediaBrowser({ onSelect, trigger }: MediaBrowserProps) {
     setUploading(true);
 
     try {
-      const blob = await vercelUpload(file.name, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload",
-      });
+      const formData = new FormData();
+      formData.append("file", file);
 
-      toast.success("Image uploaded successfully");
-      onSelect(blob.url);
-      setOpen(false); // Close and select
-      // Reset tab for next time
-      setActiveTab("library");
+      const result = await uploadImage(formData);
+
+      if (result.success && result.url) {
+        toast.success("Image uploaded successfully");
+        onSelect(result.url);
+        setOpen(false); // Close and select
+        // Reset tab for next time
+        setActiveTab("library");
+      } else {
+        throw new Error(result.error || "Upload failed");
+      }
     } catch (error) {
       console.error("Upload error:", error);
       toast.error("An error occurred during upload");

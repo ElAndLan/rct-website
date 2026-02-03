@@ -1,0 +1,609 @@
+{
+  "users": [],
+  "accounts": [],
+  "sessions": [],
+  "verificationTokens": [],
+  "heroSlides": [
+    {
+      "id": "cmkzwnz0f0000646kdjyp3pr1",
+      "title": "Beetlejuice Jr.",
+      "subtitle": "Come get your tickets today to see this thrilling show that's all about death! ",
+      "imageUrl": "/uploads/beetlejuice_jr_banner.jpg",
+      "linkText": "Buy Tickets",
+      "linkUrl": "/tickets",
+      "secondaryLinkText": "Learn More",
+      "secondaryLinkUrl": "/shows/beetlejuice-jr",
+      "isActive": true,
+      "order": 0,
+      "createdAt": "2026-01-29T20:27:19.167Z",
+      "updatedAt": "2026-01-29T20:27:46.155Z"
+    },
+    {
+      "id": "cml00eu1r001710bl82vfltbj",
+      "title": "Sister Act",
+      "subtitle": "Come get your tickets today to see this amazing story about a woman in hiding helping others find their voices! ",
+      "imageUrl": "https://www.mtishows.com/sites/default/files/styles/hero_responsive_wide/public/show/logo/000431_hero.jpg?itok=6ODiwkeX",
+      "linkText": "Buy Tickets",
+      "linkUrl": "/tickets",
+      "secondaryLinkText": "Learn More",
+      "secondaryLinkUrl": "/shows/sister-act",
+      "isActive": true,
+      "order": 1,
+      "createdAt": "2026-01-29T22:12:11.295Z",
+      "updatedAt": "2026-01-29T22:12:11.295Z"
+    }
+  ],
+  "menuItems": [
+    {
+      "id": "cmkzwpp4f0006646kiqar5zfk",
+      "label": "Current Season",
+      "path": "/shows",
+      "order": 0,
+      "parentId": "cmkzwphvw0004646kda2k99w0",
+      "createdAt": "2026-01-29T20:28:39.663Z",
+      "updatedAt": "2026-01-29T20:28:39.663Z"
+    },
+    {
+      "id": "cmkzwpy0b0008646ksb54nmqz",
+      "label": "Previous Shows",
+      "path": "/previous-shows",
+      "order": 1,
+      "parentId": "cmkzwphvw0004646kda2k99w0",
+      "createdAt": "2026-01-29T20:28:51.179Z",
+      "updatedAt": "2026-01-29T20:28:51.179Z"
+    },
+    {
+      "id": "cmkzx2iix0005132pen9uc75v",
+      "label": "Our Mission",
+      "path": "/our-mission",
+      "order": 0,
+      "parentId": "cmkzx1zst0003132pkc8m3z3h",
+      "createdAt": "2026-01-29T20:38:37.641Z",
+      "updatedAt": "2026-01-29T20:38:37.641Z"
+    },
+    {
+      "id": "cmkzwozn70002646kkw9exfce",
+      "label": "Home",
+      "path": "/",
+      "order": 0,
+      "parentId": null,
+      "createdAt": "2026-01-29T20:28:06.644Z",
+      "updatedAt": "2026-01-29T22:18:33.452Z"
+    },
+    {
+      "id": "cml00mxbs00017q9jjfatz7su",
+      "label": "Announcements",
+      "path": "/announcements",
+      "order": 1,
+      "parentId": null,
+      "createdAt": "2026-01-29T22:18:28.793Z",
+      "updatedAt": "2026-01-29T22:18:33.452Z"
+    },
+    {
+      "id": "cmkzwphvw0004646kda2k99w0",
+      "label": "Shows",
+      "path": "/shows",
+      "order": 2,
+      "parentId": null,
+      "createdAt": "2026-01-29T20:28:30.284Z",
+      "updatedAt": "2026-01-29T22:18:33.452Z"
+    },
+    {
+      "id": "cmkzwrugx000a646k07l6jlcr",
+      "label": "Get Involved",
+      "path": "",
+      "order": 3,
+      "parentId": null,
+      "createdAt": "2026-01-29T20:30:19.906Z",
+      "updatedAt": "2026-01-29T22:18:33.452Z"
+    },
+    {
+      "id": "cmkzx1zst0003132pkc8m3z3h",
+      "label": "About us",
+      "path": "/about",
+      "order": 4,
+      "parentId": null,
+      "createdAt": "2026-01-29T20:38:13.373Z",
+      "updatedAt": "2026-01-29T22:18:33.452Z"
+    },
+    {
+      "id": "cml00n8m400037q9jetvgptzz",
+      "label": "Tickets",
+      "path": "/tickets",
+      "order": 5,
+      "parentId": null,
+      "createdAt": "2026-01-29T22:18:43.420Z",
+      "updatedAt": "2026-01-29T22:18:43.420Z"
+    },
+    {
+      "id": "cmkzws2vm000c646k4c0f1zwj",
+      "label": "Volunteer",
+      "path": "/volunteer",
+      "order": 0,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-01-29T20:30:30.803Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    },
+    {
+      "id": "cml65t90f0001yqnjuymuz4sq",
+      "label": "Auditions",
+      "path": "/auditions",
+      "order": 1,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-02-03T05:29:59.007Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    },
+    {
+      "id": "cmkzwsikd000g646k487jemf7",
+      "label": "Fundraisers",
+      "path": "/fundraisers",
+      "order": 2,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-01-29T20:30:51.133Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    },
+    {
+      "id": "cmkzwsql9000i646k2v7b4kh5",
+      "label": "Donations",
+      "path": "/donate",
+      "order": 3,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-01-29T20:31:01.533Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    },
+    {
+      "id": "cmkzwu1g7000k646k2c5ovk0n",
+      "label": "Membership",
+      "path": "/membership",
+      "order": 4,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-01-29T20:32:02.263Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    },
+    {
+      "id": "cmkzx06tf0001132pyu1t8xcf",
+      "label": "Sponsors",
+      "path": "/sponsors",
+      "order": 5,
+      "parentId": "cmkzwrugx000a646k07l6jlcr",
+      "createdAt": "2026-01-29T20:36:49.155Z",
+      "updatedAt": "2026-02-03T05:30:02.158Z"
+    }
+  ],
+  "shows": [
+    {
+      "id": "cml00b8ey001610blhrn671tf",
+      "title": "Sister Act",
+      "slug": "sister-act",
+      "description": "Sister Act is the feel-good musical comedy smash based on the hit 1992 film that has audiences jumping to their feet! Featuring original music by Tony- and eight-time Oscar winner, Alan Menken (Newsies, Beauty and the Beast, Little Shop of Horrors), this uplifting musical was nominated for five Tony Awards, including Best Musical.\r\n\r\nWhen disco diva, Deloris Van Cartier, witnesses a murder, she is put in protective custody in the one place the cops are sure she won't be a found: a convent! Disguised as a nun, she finds herself at odds with both the rigid lifestyle and uptight Mother Superior. Using her unique disco moves and singing talent to inspire the choir, Deloris breathes new life into the church and community but, in doing so, blows her cover. Soon, the gang is giving chase, only to find them up against Deloris and the power of her newly found sisterhood.\r\n\r\nFilled with powerful gospel music, outrageous dancing and a truly moving story, Sister Act will leave audiences breathless. The cast is chock full of amazing roles for women of all ages, making this a perfect choice for high schools and community theatres. A sparkling tribute to the universal power of friendship, Sister Act is reason to REJOICE!",
+      "shortDescription": "A woman hiding in a convent helps her fellow sisters find their voices as she rediscovers her own. This feel-good comedy smash is based on the hit film.\r\n\r\n",
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/sister_act.jpg",
+      "status": "UPCOMING",
+      "startDate": "2026-01-29T00:00:00.000Z",
+      "endDate": null,
+      "ticketLink": "",
+      "auditionLink": "",
+      "volunteerLink": "",
+      "location": "",
+      "isProgramActive": false,
+      "programPdfUrl": null,
+      "programContent": null,
+      "ticketPrice": "0",
+      "createdAt": "2026-01-29T22:09:23.288Z",
+      "updatedAt": "2026-01-29T22:11:09.592Z"
+    },
+    {
+      "id": "cmkzwjs920000c6bqawekq2rb",
+      "title": "Beetlejuice Jr.",
+      "slug": "beetlejuice-jr",
+      "description": "It's our show now, kid. The ghost-with-the-most comes to the stage in Beetlejuice JR., the frightfully funny musical based on the beloved motion picture turned Broadway phenomenon. Lydia Deetz is a strange and unusual teenager, still grieving the loss of her mother and obsessed with the whole “being dead thing.” Lucky for Lydia, she and her father move to a new house haunted by a recently deceased couple and Beetlejuice, a delightful demon with a real zest for life. When Lydia calls on Beetlejuice to scare away anyone with a pulse, this double-crossing specter shows his true stripes, unleashing a (Nether)world of pandemonium.\r\n\r\nWith music and lyrics by Tony Award-nominee Eddie Perfect and a book by Tony Award-nominated pair Anthony King and Scott Brown, Beetlejuice was nominated for eight 2019 Tony Awards including Best New Musical. A viral \"sucks-yes\" on social media, this musical struck a chord with young theatre lovers who adored its unabashed humor and emotional honesty. ",
+      "shortDescription": "Lydia Deetz, a grieving teenager, teams up with a mischievous demon, Beetlejuice, to haunt her new home and scare away her father and his fiancée.",
+      "imageUrl": "/uploads/23918aac-626e-4846-956e-ffa771e0b363.png",
+      "status": "UPCOMING",
+      "startDate": "2026-01-30T00:00:00.000Z",
+      "endDate": "2026-02-08T00:00:00.000Z",
+      "ticketLink": "",
+      "auditionLink": "",
+      "volunteerLink": "/volunteer",
+      "location": "Reading Civic Theatre",
+      "isProgramActive": false,
+      "programPdfUrl": null,
+      "programContent": null,
+      "ticketPrice": "35",
+      "createdAt": "2026-01-29T20:24:03.781Z",
+      "updatedAt": "2026-02-03T06:46:58.371Z"
+    }
+  ],
+  "castMembers": [
+    {
+      "id": "cmkzx6r3j000f132ph6lxa2p0",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Logan Allen",
+      "role": "Beetlejuice",
+      "bio": null,
+      "imageUrl": "/uploads/1d2f3978-e87f-4421-92c5-40e8e3e7c10f.jpg",
+      "order": 0
+    },
+    {
+      "id": "cmkzzy0ui000110blbao3igom",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Daria Orphanos",
+      "role": "Lydia Deetz",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Daria%20Orphanos.jpg",
+      "order": 0
+    },
+    {
+      "id": "cmkzzzkf0000310blvrgeprr3",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Eleanor Pretz",
+      "role": "Delia Schlimmer",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Eleanor%20Pretz.jpg",
+      "order": 0
+    },
+    {
+      "id": "cmkzzzyhu000510bluxzwoqvf",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Liam Kadas",
+      "role": "Charles Deetz",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Liam%20Kadas.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml0009dr000710blxnac1s13",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Harper Kozuch",
+      "role": "Barbara Maitland",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Harper%20Kozuch.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml000mve000910blhkkn9943",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Jeremy Ortiz",
+      "role": "Adam Maitland",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Jeremy%20Ortiz.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml0014d4000b10bl5hl1ep1s",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Jaydeanna Garcia",
+      "role": "Miss Argentina/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Jaydeanna%20Garcia.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml001ff0000d10bl6svjhw76",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Finley Hunter",
+      "role": "Sky/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Finley%20Hunter.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml001vkv000f10bl1jrydc2e",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Lewis Humphries",
+      "role": "Maxie Dean/Otho/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Lewis%20Humphries.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml0027nc000h10blc4m11jzz",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Audrey Bokosky",
+      "role": "Maxine Dean/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Audrey%20Bokosky.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml002j0i000j10blnrvgfw3n",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Dahlia Grill",
+      "role": "Juno/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Dahlia%20Grill.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml0039y5000l10bl6t37h3c5",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Janysha Martinez-Rios",
+      "role": "Dance Captain/Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Janysha%20Martinez-Rios.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml003m4j000n10blb3yy9v81",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Aria Skelly",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Aria%20Skelly.jpeg",
+      "order": 0
+    },
+    {
+      "id": "cml0041th000p10bll5eemr6i",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Aurora Kiem",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Aurora%20Kiem.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml004a5c000r10bletgvrtru",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Brianna Boyles",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Brianna%20Boyles.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml004qca000t10bl0858cr4h",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Eliese Bortz",
+      "role": "Eliese Bortz",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Eliese%20Bortz.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml005j0e000x10bl7rq10r6z",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Gianna Cavalucci",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Gianna%20Cavallucci.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml005smr000z10bl372iif8i",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Holly Lange",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Holly%20Lange.jpg",
+      "order": 0
+    },
+    {
+      "id": "cml0068wz001110bl21ty70rr",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "name": "Lillian McCord",
+      "role": "Ensemble",
+      "bio": null,
+      "imageUrl": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/Lillian%20McCord.jpg",
+      "order": 0
+    }
+  ],
+  "showPhotos": [],
+  "volunteerApplications": [],
+  "auditions": [
+    {
+      "id": "cmkzx4q4b0007132ph08hoh2a",
+      "showId": "cmkzwjs920000c6bqawekq2rb",
+      "description": "Yourself",
+      "location": "Reading Civic Theatre",
+      "isActive": true,
+      "createdAt": "2026-01-29T20:40:20.792Z",
+      "updatedAt": "2026-01-29T20:40:20.792Z"
+    }
+  ],
+  "auditionSlots": [
+    {
+      "id": "cmkzx516v0008132ptlyh26c5",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T17:00:00.000Z",
+      "endTime": "2026-01-29T17:30:00.000Z",
+      "capacity": 6
+    },
+    {
+      "id": "cmkzx516v0009132pc780d9bh",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T17:30:00.000Z",
+      "endTime": "2026-01-29T18:00:00.000Z",
+      "capacity": 6
+    },
+    {
+      "id": "cmkzx516v000a132p9rx2vey1",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T18:00:00.000Z",
+      "endTime": "2026-01-29T18:30:00.000Z",
+      "capacity": 6
+    },
+    {
+      "id": "cmkzx516v000b132pudhevqei",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T18:30:00.000Z",
+      "endTime": "2026-01-29T19:00:00.000Z",
+      "capacity": 6
+    },
+    {
+      "id": "cmkzx516v000c132pk7kz1vz5",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T19:00:00.000Z",
+      "endTime": "2026-01-29T19:30:00.000Z",
+      "capacity": 6
+    },
+    {
+      "id": "cmkzx516v000d132p5oh87num",
+      "auditionId": "cmkzx4q4b0007132ph08hoh2a",
+      "startTime": "2026-01-29T19:30:00.000Z",
+      "endTime": "2026-01-29T20:00:00.000Z",
+      "capacity": 6
+    }
+  ],
+  "auditionAttendees": [],
+  "newsPosts": [
+    {
+      "id": "cml00glsu001810blgt6fg8sg",
+      "title": "2026 Show Season Announced! ",
+      "slug": "2026-show-season-announced",
+      "content": "RCT is absolutely elated to announce our full 2026 show season lineup! \n\nTickets for all shows are now available, so get them while they're hot! \n\n",
+      "imageUrl": "/uploads/RCT-2026-Season-Portrait.jpeg",
+      "published": true,
+      "createdAt": "2026-01-29T22:13:33.918Z",
+      "updatedAt": "2026-01-29T22:13:33.918Z"
+    },
+    {
+      "id": "cml00i3v7001910blbk59y1fh",
+      "title": "\"A Dinner with a Show\" package announced!",
+      "slug": "a-dinner-with-a-show-package-announced",
+      "content": "RCT is pleased to announce a \"Dinner-Show\" package with the Reading Country Club! \n\nReading Country Club will take 10% off your meal if you show them your ticket purchase on the night/day of the show you are attending. \n\nYou need to indicate that you are buying your meal plan under the Reading Civic Theatre meal plan.",
+      "imageUrl": "/uploads/RCC-Regular-Flyer-Dinner-.png",
+      "published": true,
+      "createdAt": "2026-01-29T22:14:43.987Z",
+      "updatedAt": "2026-01-29T22:14:43.987Z"
+    },
+    {
+      "id": "cml00memt001a10blcyxesscu",
+      "title": "RCT 2026 Gala Contestants!",
+      "slug": "rct-2026-gala-contestants",
+      "content": "Reading Civic Theatre is excited to announce the RCT 2026 Gala Contestants! \n\nSienna Brown (Senior) - Twin Valley\n\nKolby Grim (Senior) - Boyertown\n\nElliott Johnson (Senior) - Kutztown\n\nKailey Reinboth (Senior) - Boyertown\n\nGracie Torres (Senior) - Schuylkill Valley\n\nSloane Wolfe (Senior) - Twin Valley\n\nEvianna Jones (Junior) - Exeter\n\nMaya Lopez (Junior) - Boyertown\n\nLeah Price (Junior) - Wyomissing\n\n\nPlease make sure to mark your calendars for Saturday, February 28th, for our annual Gala to be held at the Reading Country Club! \n\nWe're excited to see you there! ",
+      "imageUrl": null,
+      "published": true,
+      "createdAt": "2026-01-29T22:18:04.565Z",
+      "updatedAt": "2026-01-29T22:18:04.565Z"
+    }
+  ],
+  "contactSubmissions": [],
+  "siteSettings": [
+    {
+      "id": "cml009kpz001210blxh9qe38f",
+      "key": "logoUrl",
+      "value": "https://pkcdxtlpi7jfvlrp.public.blob.vercel-storage.com/RCT_LOGO%20horizontal%20ON%20LIGHT%20bg.png"
+    },
+    {
+      "id": "cml009kq9001310bl0m4x0xpc",
+      "key": "homeSectionImageUrl",
+      "value": "/uploads/RCT-2026-Season-Portrait.jpeg"
+    },
+    {
+      "id": "cml009kqf001410blo5m9bpv6",
+      "key": "homeSectionTitle",
+      "value": "Welcome to the Reading Civic Theatre's home! "
+    },
+    {
+      "id": "cml009kqk001510bldi2ubbuj",
+      "key": "homeSectionBody",
+      "value": "We’re thrilled to have you join our vibrant community dedicated to the performing arts.\r\n\r\n Our theater is a hub of creativity and camaraderie, where individuals of all ages and backgrounds come together to create unforgettable theatrical experiences. \r\n\r\nThank you for supporting your local arts community, and we look forward to seeing you at the theater!"
+    },
+    {
+      "id": "cml14styd0000t3evjq1caqi4",
+      "key": "donationTitle",
+      "value": "Support Reading Civic Theatre"
+    },
+    {
+      "id": "cml14su2d0001t3evuuoeya93",
+      "key": "donationBody",
+      "value": "Reading Civic Theatre is proud to be a 501(c)(3) non-profit organization dedicated to bringing quality Broadway-style musicals to the Reading area.\n\nThe reality of community theatre is that ticket sales alone cannot cover the costs of our productions, let alone our operational expenses. We rely on the generosity of our community—businesses, patrons, and friends like you—to bridge that gap.\n\nYour tax-deductible donation helps us fund:\n• Professional-grade sets, costumes, and orchestras\n• Venue rentals and technical resources\n• Opportunities for local talent to shine\n\nEvery contribution, no matter the size, plays a vital role in keeping our tradition alive. Thank you for supporting the arts in Berks County!"
+    }
+  ],
+  "fundraisers": [
+    {
+      "id": "cml14b8qd0000mndjuzimn8rs",
+      "title": "Spring Gala 2026",
+      "slug": "spring-gala-2026-2026",
+      "shortDescription": "Reading Civic Theatre's 2026 Spring Gala at the Reading Country Club",
+      "description": "RCT announces our annual Gala is set for Saturday February 28, 2025.  The Sixteenth Gala will be held at the Reading Country Club from 5:00 – 11:00 PM. There will be a sit down dinner  with soda, tea, coffee, dessert (from Sweet Street) included.  Cash bar will be available.  We will continue to have raffle items as well as our vocal competition. Please mark your calendars and we hope to see you there.",
+      "locationName": "Reading Country Club",
+      "address": "5311 Perkiomen Ave",
+      "city": "Reading",
+      "state": "Pennsylvania",
+      "zip": "19606",
+      "imageUrl": null,
+      "isActive": true,
+      "createdAt": "2026-01-30T16:49:08.315Z",
+      "updatedAt": "2026-01-30T16:49:08.315Z"
+    }
+  ],
+  "fundraiserEvents": [
+    {
+      "id": "cml14b8qd0001mndjuh37gxeq",
+      "fundraiserId": "cml14b8qd0000mndjuzimn8rs",
+      "startTime": "2026-02-28T23:00:00.000Z",
+      "endTime": "2026-02-28T23:00:00.000Z"
+    }
+  ],
+  "pages": [
+    {
+      "id": "cml15kflp0000ge6txqgiks5d",
+      "title": "Membership",
+      "slug": "membership",
+      "content": "Membership in Reading Civic Theatre for the current year (2026) is free, with extra paid options with generous benefits based on the tier you select! We also have several categories of membership, ranging from Adult to Student to Family memberships where three or more members of one family can join. \r\n\r\nMembers receive our newsletter, \"The Vocalines\", which contains important information about our current and upcoming shows, auditions and meetings. Each issue arrives approximately around the middle of each month, towards the end of the second week to the beginning of the third week.\r\n\r\nMembership also affords you the opportunity to vote in our board elections and other society issues (Note: Student members do not have a vote in elections and other matters.) \r\n\r\nThat being said, you do not have to be a member to attend any of our meetings! We would love to see any of you there to find out what we're all about and what we stand for. \r\n\r\nThe general membership meetings are held on the third Monday of the following months on these following dates: \r\n\r\n- February 16, 2026\r\n- May 18, 2026\r\n- August 17, 2026\r\n- December 21, 2026\r\n\r\nThese meetings will be held at our current theatre (The old Fox Theatre complex in Exeter) located at: \r\n\r\n4350 Perkiomen Ave\r\nReading, PA 19606\r\n\r\nTo become a member, please fill out the following form. If you select one of the paid tiers, when you submit this form you will be directed to our donation page to pay that amount:\r\n\r\n",
+      "isPublished": true,
+      "createdAt": "2026-01-30T17:24:16.765Z",
+      "updatedAt": "2026-01-30T17:24:16.765Z"
+    },
+    {
+      "id": "cml68syeu0006e0az98b8jit6",
+      "title": "About Us",
+      "slug": "about",
+      "content": "Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content Temporary Content ",
+      "isPublished": false,
+      "createdAt": "2026-02-03T06:53:44.119Z",
+      "updatedAt": "2026-02-03T06:53:44.119Z"
+    }
+  ],
+  "membershipApplications": [
+    {
+      "id": "cml17ed46000011qdwfn02smp",
+      "type": "Regular",
+      "school": null,
+      "grade": null,
+      "firstName": "Andrew",
+      "lastName": "LaNoue",
+      "address": "1210 Marion St",
+      "city": "Reading",
+      "state": "Pennsylvania",
+      "zip": "19604",
+      "phoneHome": "5419907615",
+      "phoneCell": "5419907615",
+      "email": "xandrewlanoue@gmail.com",
+      "age": "33",
+      "birthDate": "02/05",
+      "hideAddress": true,
+      "hidePhone": true,
+      "hideEmail": true,
+      "familyMembers": "[]",
+      "tier": "Registered Member",
+      "amount": "0",
+      "createdAt": "2026-01-30T18:15:32.805Z"
+    },
+    {
+      "id": "cml17ioxn000111qd8vqg0qsr",
+      "type": "Regular",
+      "school": null,
+      "grade": null,
+      "firstName": "Maxi",
+      "lastName": "Estrada",
+      "address": "1210 Marion St",
+      "city": "Reading",
+      "state": "Pennsylvania",
+      "zip": "19604",
+      "phoneHome": "484-848-4148",
+      "phoneCell": "",
+      "email": "MaxiMarie1212@gmail.com",
+      "age": "33",
+      "birthDate": "12/12",
+      "hideAddress": true,
+      "hidePhone": false,
+      "hideEmail": true,
+      "familyMembers": "[]",
+      "tier": "Registered Member",
+      "amount": "0",
+      "createdAt": "2026-01-30T18:18:54.750Z"
+    }
+  ]
+}

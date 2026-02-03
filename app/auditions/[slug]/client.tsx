@@ -3,10 +3,23 @@
 import { useState } from "react";
 import { format, isSameDay } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +27,7 @@ import { Clock, MapPin, Calendar as CalendarIcon, Info } from "lucide-react";
 import { toast } from "sonner";
 import { bookAuditionSlot } from "@/app/actions/audition";
 import { cn } from "@/lib/utils";
+import { formatPhoneNumber } from "@/lib/formatters";
 
 type Slot = {
   id: string;
@@ -30,24 +44,34 @@ type Props = {
   slots: Slot[];
 };
 
-export function PublicAuditionClient({ showTitle, description, location, slots }: Props) {
+export function PublicAuditionClient({
+  showTitle,
+  description,
+  location,
+  slots,
+}: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phone, setPhone] = useState("");
 
   // Filter slots for selected date
   const slotsForDate = slots
     .filter((slot) => date && isSameDay(new Date(slot.startTime), date))
-    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+    .sort(
+      (a, b) =>
+        new Date(a.startTime).getTime() - new Date(b.startTime).getTime(),
+    );
 
   // Get dates that have available slots
   const availableDates = slots
-    .filter(s => s.attendeeCount < s.capacity)
-    .map(s => new Date(s.startTime));
+    .filter((s) => s.attendeeCount < s.capacity)
+    .map((s) => new Date(s.startTime));
 
   const handleBookClick = (slot: Slot) => {
     setSelectedSlot(slot);
+    setPhone("");
     setIsBookingOpen(true);
   };
 
@@ -66,7 +90,9 @@ export function PublicAuditionClient({ showTitle, description, location, slots }
     setIsSubmitting(false);
 
     if (result.success) {
-      toast.success("Audition booked successfully! Check your email for details.");
+      toast.success(
+        "Audition booked successfully! Check your email for details.",
+      );
       setIsBookingOpen(false);
       // Optional: Refresh or update local state
     } else {
@@ -114,7 +140,11 @@ export function PublicAuditionClient({ showTitle, description, location, slots }
                   available: availableDates,
                 }}
                 modifiersStyles={{
-                  available: { fontWeight: "bold", textDecoration: "underline", color: "var(--primary)" }
+                  available: {
+                    fontWeight: "bold",
+                    textDecoration: "underline",
+                    color: "var(--primary)",
+                  },
                 }}
               />
             </CardContent>
@@ -153,7 +183,7 @@ export function PublicAuditionClient({ showTitle, description, location, slots }
                         key={slot.id}
                         className={cn(
                           "border rounded-lg p-4 transition-all hover:border-primary",
-                          isFull ? "opacity-60 bg-muted" : "bg-card"
+                          isFull ? "opacity-60 bg-muted" : "bg-card",
                         )}
                       >
                         <div className="flex justify-between items-start mb-2">
@@ -162,14 +192,16 @@ export function PublicAuditionClient({ showTitle, description, location, slots }
                             {format(new Date(slot.startTime), "h:mm a")}
                           </div>
                           <Badge variant={isFull ? "destructive" : "secondary"}>
-                            {isFull ? "Full" : `${spotsLeft} spot${spotsLeft !== 1 ? 's' : ''} left`}
+                            {isFull
+                              ? "Full"
+                              : `${spotsLeft} spot${spotsLeft !== 1 ? "s" : ""} left`}
                           </Badge>
                         </div>
                         <div className="text-sm text-muted-foreground mb-4">
                           Until {format(new Date(slot.endTime), "h:mm a")}
                         </div>
-                        <Button 
-                          className="w-full" 
+                        <Button
+                          className="w-full"
                           disabled={isFull}
                           onClick={() => handleBookClick(slot)}
                         >
@@ -203,29 +235,46 @@ export function PublicAuditionClient({ showTitle, description, location, slots }
           <form action={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label htmlFor="fullName">Full Name *</Label>
-              <Input id="fullName" name="fullName" required placeholder="Jane Doe" />
+              <Input
+                id="fullName"
+                name="fullName"
+                required
+                placeholder="Jane Doe"
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" name="email" type="email" placeholder="jane@example.com" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="jane@example.com"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Phone Number</Label>
-                <Input id="phoneNumber" name="phoneNumber" type="tel" placeholder="(555) 123-4567" />
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  type="tel"
+                  placeholder="(555) 123-4567"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                />
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-                * Either Email or Phone is required.
+              * Either Email or Phone is required.
             </p>
 
             <div className="space-y-2">
               <Label htmlFor="desiredRole">Desired Role(s)</Label>
-              <Textarea 
-                id="desiredRole" 
-                name="desiredRole" 
-                placeholder="e.g. Lead, Ensemble, or any..." 
+              <Textarea
+                id="desiredRole"
+                name="desiredRole"
+                placeholder="e.g. Lead, Ensemble, or any..."
                 rows={3}
               />
             </div>

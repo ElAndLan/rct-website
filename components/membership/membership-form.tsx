@@ -18,6 +18,7 @@ import { createMembershipApplication } from "@/app/actions/membership";
 import { format } from "date-fns";
 import { Download, Plus, Trash2, CreditCard } from "lucide-react";
 import { toast } from "sonner";
+import { formatPhoneNumber, formatZipCode } from "@/lib/formatters";
 
 export function MembershipForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,6 +29,10 @@ export function MembershipForm() {
   const [selectedTier, setSelectedTier] = useState("");
   const [customAmount, setCustomAmount] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+
+  const [phoneHome, setPhoneHome] = useState("");
+  const [phoneCell, setPhoneCell] = useState("");
+  const [zip, setZip] = useState("");
 
   // Form State
   const [hideAddress, setHideAddress] = useState(false);
@@ -104,6 +109,9 @@ export function MembershipForm() {
         (e.target as HTMLFormElement).reset();
         setFamilyMembers([]);
         setSelectedTier("");
+        setPhoneHome("");
+        setPhoneCell("");
+        setZip("");
         setIsSuccess(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -294,18 +302,40 @@ export function MembershipForm() {
                 </div>
                 <div className="space-y-2 col-span-1">
                   <Label htmlFor="zip">Zip</Label>
-                  <Input id="zip" name="zip" required />
+                  <Input
+                    id="zip"
+                    name="zip"
+                    required
+                    value={zip}
+                    onChange={(e) => setZip(formatZipCode(e.target.value))}
+                  />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="phoneHome">Home Phone</Label>
-                  <Input id="phoneHome" name="phoneHome" type="tel" />
+                  <Input
+                    id="phoneHome"
+                    name="phoneHome"
+                    type="tel"
+                    value={phoneHome}
+                    onChange={(e) =>
+                      setPhoneHome(formatPhoneNumber(e.target.value))
+                    }
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phoneCell">Cell Phone</Label>
-                  <Input id="phoneCell" name="phoneCell" type="tel" />
+                  <Input
+                    id="phoneCell"
+                    name="phoneCell"
+                    type="tel"
+                    value={phoneCell}
+                    onChange={(e) =>
+                      setPhoneCell(formatPhoneNumber(e.target.value))
+                    }
+                  />
                 </div>
               </div>
 

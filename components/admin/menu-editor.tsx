@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import {
   DndContext,
   closestCenter,
@@ -145,6 +145,7 @@ export function MenuSortableList({
   initialItems: MenuItemWithChildren[];
 }) {
   const [items, setItems] = useState(initialItems);
+  const dndContextId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {

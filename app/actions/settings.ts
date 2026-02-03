@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { writeFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
@@ -27,6 +27,9 @@ export async function updateSiteSettings(formData: FormData) {
     const logoFile = formData.get("logo") as File;
     const logoUrlString = formData.get("logoUrl") as string;
 
+    const headerBannerFile = formData.get("headerBanner") as File;
+    const headerBannerUrlString = formData.get("headerBannerUrl") as string;
+
     // Home Section Fields
     const homeSectionImageFile = formData.get("homeSectionImage") as File;
     const homeSectionImageUrlString = formData.get(
@@ -41,6 +44,23 @@ export async function updateSiteSettings(formData: FormData) {
     const donationTitle = formData.get("donationTitle") as string;
     const donationBody = formData.get("donationBody") as string;
     const donationPaypalLink = formData.get("donationPaypalLink") as string;
+
+    // Footer Fields
+    const footerDescription = formData.get("footerDescription") as string;
+    const contactAddress1 = formData.get("contactAddress1") as string;
+    const contactAddress2 = formData.get("contactAddress2") as string;
+    const contactEmail = formData.get("contactEmail") as string;
+    const socialFacebook = formData.get("socialFacebook") as string;
+    const socialInstagram = formData.get("socialInstagram") as string;
+    const footerCopyright = formData.get("footerCopyright") as string;
+    const footerLinks = formData.get("footerLinks") as string; // JSON string
+
+    // Contact Page Fields
+    const contactPageTitle = formData.get("contactPageTitle") as string;
+    const contactPageBody = formData.get("contactPageBody") as string;
+    const contactNotificationEmail = formData.get(
+      "contactNotificationEmail",
+    ) as string;
 
     // --- Helper to process image upload/url ---
     async function processImage(
@@ -81,6 +101,13 @@ export async function updateSiteSettings(formData: FormData) {
     // Process Logo
     const finalLogoUrl = await processImage(logoFile, logoUrlString, "logo");
 
+    // Process Header Banner
+    const finalHeaderBannerUrl = await processImage(
+      headerBannerFile,
+      headerBannerUrlString,
+      "header-banner",
+    );
+
     // Process Home Section Image
     const finalHomeSectionImageUrl = await processImage(
       homeSectionImageFile,
@@ -98,6 +125,7 @@ export async function updateSiteSettings(formData: FormData) {
     // Upsert Settings
     const settingsToUpdate = [
       { key: "logoUrl", value: finalLogoUrl },
+      { key: "headerBannerUrl", value: finalHeaderBannerUrl },
       { key: "homeSectionImageUrl", value: finalHomeSectionImageUrl },
       { key: "homeSectionTitle", value: homeSectionTitle },
       { key: "homeSectionBody", value: homeSectionBody },
@@ -105,6 +133,17 @@ export async function updateSiteSettings(formData: FormData) {
       { key: "donationBody", value: donationBody },
       { key: "donationPaypalLink", value: donationPaypalLink },
       { key: "donationImageUrl", value: finalDonationImageUrl },
+      { key: "footerDescription", value: footerDescription },
+      { key: "contactAddress1", value: contactAddress1 },
+      { key: "contactAddress2", value: contactAddress2 },
+      { key: "contactEmail", value: contactEmail },
+      { key: "socialFacebook", value: socialFacebook },
+      { key: "socialInstagram", value: socialInstagram },
+      { key: "footerCopyright", value: footerCopyright },
+      { key: "footerLinks", value: footerLinks },
+      { key: "contactPageTitle", value: contactPageTitle },
+      { key: "contactPageBody", value: contactPageBody },
+      { key: "contactNotificationEmail", value: contactNotificationEmail },
     ];
 
     for (const setting of settingsToUpdate) {
