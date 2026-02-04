@@ -8,9 +8,7 @@ import { getHeroSlides } from "@/app/actions/hero-slides";
 import { getSiteSettings } from "@/app/actions/settings";
 import dynamic from "next/dynamic";
 
-const HeroCarousel = dynamic(
-  () => import("@/components/home/HeroCarousel").then((mod) => mod.HeroCarousel)
-);
+const HeroCarousel = dynamic(() => import("@/components/home/HeroCarousel"));
 
 export default async function Home() {
   const { slides } = await getHeroSlides();

@@ -87,7 +87,7 @@ export function SeatSelector({
               <div className="flex gap-1.5 justify-center flex-1">
                 {/* Sound Booth for J/K - One Big Box */}
                 {row === "J" && (
-                  <div className="w-[120px] h-[calc(200%+0.5rem)] bg-muted border flex items-center justify-center text-[10px] font-bold text-muted-foreground rounded z-10 mr-2 shadow-sm">
+                  <div className="w-[120px] h-[calc(200%_+_0.5rem)] bg-muted border flex items-center justify-center text-[10px] font-bold text-muted-foreground rounded z-10 mr-2 shadow-sm">
                     SOUND BOOTH
                   </div>
                 )}
@@ -210,3 +210,5 @@ export function SeatSelector({
     </div>
   );
 }
+
+export default SeatSelector;

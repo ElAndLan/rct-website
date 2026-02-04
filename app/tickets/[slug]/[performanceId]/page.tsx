@@ -7,10 +7,7 @@ import { notFound } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const SeatSelector = dynamic(
-  () =>
-    import("@/components/tickets/seat-selector").then(
-      (mod) => mod.SeatSelector,
-    ),
+  () => import("@/components/tickets/seat-selector"),
   {
     loading: () => (
       <div className="h-96 flex items-center justify-center">
