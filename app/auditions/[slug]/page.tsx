@@ -4,10 +4,7 @@ import { Metadata } from "next";
 import { getAuditionBySlug, getPublicAuditions } from "@/app/actions/audition";
 
 export async function generateStaticParams() {
-  const shows = await getPublicAuditions();
-  return shows.map((show) => ({
-    slug: show.slug,
-  }));
+  return [];
 }
 
 type Props = {

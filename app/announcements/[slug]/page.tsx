@@ -4,11 +4,7 @@ import { notFound } from "next/navigation";
 import { format } from "date-fns";
 
 export async function generateStaticParams() {
-  const result = await getNewsPosts(false); // Only published
-  if (!result.success || !result.posts) return [];
-  return result.posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return [];
 }
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

@@ -5,11 +5,7 @@ import { Metadata } from "next";
 import { MembershipForm } from "@/components/membership/membership-form";
 
 export async function generateStaticParams() {
-  const result = await getPages();
-  if (!result.success || !result.pages) return [];
-  return result.pages.map((page) => ({
-    slug: page.slug,
-  }));
+  return [];
 }
 
 type Props = {

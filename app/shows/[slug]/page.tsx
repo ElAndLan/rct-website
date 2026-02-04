@@ -4,10 +4,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export async function generateStaticParams() {
-  const shows = await getShows();
-  return shows.map((show) => ({
-    slug: show.slug,
-  }));
+  return [];
 }
 import { Ticket, FileText, Calendar, MapPin, ArrowLeft } from "lucide-react";
 import Link from "next/link";
