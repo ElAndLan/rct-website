@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 import PublicLayout from "@/components/layout/PublicLayout";
 
 export async function generateStaticParams() {
-  const shows = await getShows();
-  return shows.map((show) => ({
-    slug: show.slug,
-  }));
+  return [];
 }
 
 import Link from "next/link";

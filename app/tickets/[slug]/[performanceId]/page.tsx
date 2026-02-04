@@ -1,15 +1,13 @@
-
-import { getPerformanceDetails, getAllPerformances } from "@/app/actions/tickets";
+import {
+  getPerformanceDetails,
+  getAllPerformances,
+} from "@/app/actions/tickets";
 import { SeatSelector } from "@/components/tickets/seat-selector";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
-  const performances = await getAllPerformances();
-  return performances.map((perf) => ({
-    slug: perf.show.slug,
-    performanceId: perf.id,
-  }));
+  return [];
 }
 
 interface PageProps {
@@ -29,7 +27,8 @@ export default async function SeatSelectionPage({ params }: PageProps) {
       <div className="container py-12">
         <h1 className="text-3xl font-bold mb-2 text-center">Select Seats</h1>
         <p className="text-center text-muted-foreground mb-8">
-            {performance.show.title} • {new Date(performance.date).toLocaleString()}
+          {performance.show.title} •{" "}
+          {new Date(performance.date).toLocaleString()}
         </p>
 
         <SeatSelector
