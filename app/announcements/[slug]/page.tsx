@@ -1,7 +1,15 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import { getNewsPostBySlug } from "@/app/actions/news";
+import { getNewsPostBySlug, getNewsPosts } from "@/app/actions/news";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
+
+export async function generateStaticParams() {
+  const result = await getNewsPosts(false); // Only published
+  if (!result.success || !result.posts) return [];
+  return result.posts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";

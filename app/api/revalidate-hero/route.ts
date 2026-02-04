@@ -1,9 +1,7 @@
-
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 
-export async function GET() {
+export async function POST() {
   revalidateTag("hero-slides", "max");
-  revalidateTag("shows", "max"); 
   return NextResponse.json({ revalidated: true, now: Date.now() });
 }

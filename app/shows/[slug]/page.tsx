@@ -1,7 +1,14 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import { getShowBySlug } from "@/app/actions/shows";
+import { getShowBySlug, getShows } from "@/app/actions/shows";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+
+export async function generateStaticParams() {
+  const shows = await getShows();
+  return shows.map((show) => ({
+    slug: show.slug,
+  }));
+}
 import { Ticket, FileText, Calendar, MapPin, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";

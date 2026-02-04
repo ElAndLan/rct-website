@@ -1,8 +1,16 @@
 
-import { getPerformanceDetails } from "@/app/actions/tickets";
+import { getPerformanceDetails, getAllPerformances } from "@/app/actions/tickets";
 import { SeatSelector } from "@/components/tickets/seat-selector";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { notFound } from "next/navigation";
+
+export async function generateStaticParams() {
+  const performances = await getAllPerformances();
+  return performances.map((perf) => ({
+    slug: perf.show.slug,
+    performanceId: perf.id,
+  }));
+}
 
 interface PageProps {
   params: Promise<{ slug: string; performanceId: string }>;

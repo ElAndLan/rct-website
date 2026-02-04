@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 import { sendEmail } from "@/lib/mail";
 
@@ -20,6 +20,17 @@ export interface SeatWithStatus {
 
 // --- Fetch Actions ---
 
+export async function getAllPerformances() {
+  try {
+    return await prisma.showPerformance.findMany({
+      include: { show: true },
+    });
+  } catch (error) {
+    console.error("Failed to fetch all performances:", error);
+    return [];
+  }
+}
+
 export async function getShowPerformances(slug: string) {
   try {
     const show = await prisma.show.findUnique({
@@ -37,52 +48,56 @@ export async function getShowPerformances(slug: string) {
   }
 }
 
-export async function getPerformanceDetails(performanceId: string) {
-  try {
-    const performance = await prisma.showPerformance.findUnique({
-      where: { id: performanceId },
-      include: {
-        show: true,
-      },
-    });
+export const getPerformanceDetails = unstable_cache(
+  async (performanceId: string) => {
+    try {
+      const performance = await prisma.showPerformance.findUnique({
+        where: { id: performanceId },
+        include: {
+          show: true,
+        },
+      });
 
-    if (!performance) return null;
+      if (!performance) return null;
 
-    // Fetch all seats
-    const allSeats = await prisma.seat.findMany({
-      orderBy: [{ row: "asc" }, { number: "asc" }],
-    });
+      // Fetch all seats
+      const allSeats = await prisma.seat.findMany({
+        orderBy: [{ row: "asc" }, { number: "asc" }],
+      });
 
-    // Fetch sold tickets for this performance
-    const soldTickets = await prisma.ticket.findMany({
-      where: {
-        performanceId,
-        status: "SOLD",
-      },
-      select: { seatId: true },
-    });
+      // Fetch sold tickets for this performance
+      const soldTickets = await prisma.ticket.findMany({
+        where: {
+          performanceId,
+          status: "SOLD",
+        },
+        select: { seatId: true },
+      });
 
-    const soldSeatIds = new Set(soldTickets.map((t) => t.seatId));
+      const soldSeatIds = new Set(soldTickets.map((t) => t.seatId));
 
-    // Combine into SeatWithStatus
-    const seats: SeatWithStatus[] = allSeats.map((seat) => ({
-      id: seat.id,
-      row: seat.row,
-      number: seat.number,
-      category: seat.category,
-      status: soldSeatIds.has(seat.id) ? "SOLD" : "AVAILABLE",
-      price: Number(performance.show.ticketPrice || 0),
-    }));
+      // Combine into SeatWithStatus
+      const seats: SeatWithStatus[] = allSeats.map((seat) => ({
+        id: seat.id,
+        row: seat.row,
+        number: seat.number,
+        category: seat.category,
+        status: soldSeatIds.has(seat.id) ? "SOLD" : "AVAILABLE",
+        price: Number(performance.show.ticketPrice || 0),
+      }));
 
-    return {
-      performance,
-      seats,
-    };
-  } catch (error) {
-    console.error("Failed to fetch performance details:", error);
-    return null;
-  }
-}
+      return {
+        performance,
+        seats,
+      };
+    } catch (error) {
+      console.error("Failed to fetch performance details:", error);
+      return null;
+    }
+  },
+  ["performance-details"],
+  { tags: ["tickets"] },
+);
 
 // --- Transaction Actions ---
 

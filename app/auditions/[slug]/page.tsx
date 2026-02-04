@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 import { PublicAuditionClient } from "./client";
 import { Metadata } from "next";
-import { getAuditionBySlug } from "@/app/actions/audition";
+import { getAuditionBySlug, getPublicAuditions } from "@/app/actions/audition";
+
+export async function generateStaticParams() {
+  const shows = await getPublicAuditions();
+  return shows.map((show) => ({
+    slug: show.slug,
+  }));
+}
 
 type Props = {
   params: Promise<{ slug: string }>;

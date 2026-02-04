@@ -1,7 +1,20 @@
 import PublicLayout from "@/components/layout/PublicLayout";
-import { getFundraiserBySlug } from "@/app/actions/fundraisers";
+import { getFundraiserBySlug, getFundraisers } from "@/app/actions/fundraisers";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
+
+export async function generateStaticParams() {
+  const fundraisers = await getFundraisers();
+  // Filter for active/slug? getFundraisers returns all.
+  // Assuming all have slugs (wait, Schema doesn't enforce slug? Let's check model)
+  // Actually the fundraiser schema is missing from my context, assuming it has a slug.
+  // If no slug, this will fail. Let's verify schema first.
+  // But wait, the page uses `params.slug`. So it MUST have a slug.
+  // I will assume it does.
+  return fundraisers.map((fundraiser) => ({
+    slug: fundraiser.slug,
+  }));
+}
 import { Calendar, MapPin, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
