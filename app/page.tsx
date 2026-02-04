@@ -4,9 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Ticket, ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { HeroCarousel } from "@/components/home/HeroCarousel";
 import { getHeroSlides } from "@/app/actions/hero-slides";
 import { getSiteSettings } from "@/app/actions/settings";
+import dynamic from "next/dynamic";
+
+const HeroCarousel = dynamic(
+  () => import("@/components/home/HeroCarousel").then((mod) => mod.HeroCarousel)
+);
 
 export default async function Home() {
   const { slides } = await getHeroSlides();

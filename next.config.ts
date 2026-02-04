@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  productionBrowserSourceMaps: false,
+  compress: false,
   experimental: {
     workerThreads: false,
     cpus: 1,
