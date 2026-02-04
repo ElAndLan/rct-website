@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
+    workerThreads: false,
+    cpus: 1,
     serverActions: {
       bodySizeLimit: "10mb",
     },
