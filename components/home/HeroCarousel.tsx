@@ -127,5 +127,3 @@ export function HeroCarousel({ slides = [] }: HeroCarouselProps) {
     </Carousel>
   );
 }
-
-export default HeroCarousel;

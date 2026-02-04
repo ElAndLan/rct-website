@@ -2,21 +2,9 @@ import {
   getPerformanceDetails,
   getAllPerformances,
 } from "@/app/actions/tickets";
+import { SeatSelector } from "@/components/tickets/seat-selector";
 import PublicLayout from "@/components/layout/PublicLayout";
 import { notFound } from "next/navigation";
-import dynamic from "next/dynamic";
-
-const SeatSelector = dynamic(
-  () => import("@/components/tickets/seat-selector"),
-  {
-    loading: () => (
-      <div className="h-96 flex items-center justify-center">
-        Loading seat map...
-      </div>
-    ),
-    ssr: false,
-  },
-);
 
 export async function generateStaticParams() {
   return [];

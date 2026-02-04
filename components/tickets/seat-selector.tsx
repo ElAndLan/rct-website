@@ -210,5 +210,3 @@ export function SeatSelector({
     </div>
   );
 }
-
-export default SeatSelector;
