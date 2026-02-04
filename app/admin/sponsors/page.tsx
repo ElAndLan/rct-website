@@ -1,10 +1,5 @@
 import { getSponsors, deleteSponsor } from "@/app/actions/sponsors";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -70,32 +65,37 @@ export default async function SponsorsAdminPage() {
                   <TableRow key={sponsor.id}>
                     <TableCell>{sponsor.order}</TableCell>
                     <TableCell>
-                        {sponsor.imageUrl ? (
-                            <div className="relative w-12 h-12 rounded overflow-hidden bg-muted">
-                                <Image 
-                                    src={sponsor.imageUrl} 
-                                    alt={sponsor.name}
-                                    fill
-                                    className="object-contain"
-                                />
-                            </div>
-                        ) : (
-                            <div className="w-12 h-12 rounded bg-muted flex items-center justify-center text-muted-foreground text-xs">
-                                No Img
-                            </div>
-                        )}
+                      {sponsor.imageUrl ? (
+                        <div className="relative w-12 h-12 rounded overflow-hidden bg-muted">
+                          <Image
+                            src={sponsor.imageUrl}
+                            alt={sponsor.name}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-12 h-12 rounded bg-muted flex items-center justify-center text-muted-foreground text-xs">
+                          No Img
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell className="font-medium">
                       {sponsor.name}
                     </TableCell>
                     <TableCell>
-                        {sponsor.websiteUrl ? (
-                            <a href={sponsor.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline truncate max-w-[200px] block">
-                                {sponsor.websiteUrl}
-                            </a>
-                        ) : (
-                            <span className="text-muted-foreground">-</span>
-                        )}
+                      {sponsor.websiteUrl ? (
+                        <a
+                          href={sponsor.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline truncate max-w-[200px] block"
+                        >
+                          {sponsor.websiteUrl}
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       {sponsor.isActive ? (
@@ -111,10 +111,19 @@ export default async function SponsorsAdminPage() {
                             <Pencil className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <form action={deleteSponsor.bind(null, sponsor.id)}>
-                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
+                        <form
+                          action={async () => {
+                            "use server";
+                            await deleteSponsor(sponsor.id);
+                          }}
+                        >
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </form>
                       </div>
                     </TableCell>

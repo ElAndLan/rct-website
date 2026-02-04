@@ -57,6 +57,7 @@ const getCardType = (number: string) => {
 interface TicketSelection {
   performanceId: string;
   seatIds: string[];
+  total: number;
 }
 
 export function CheckoutForm() {
@@ -128,6 +129,12 @@ export function CheckoutForm() {
     const cleanCard = formData.cardNumber.replace(/\D/g, "");
     if (!luhnCheck(cleanCard)) {
       setError("Invalid Credit Card Number. Please check and try again.");
+      setLoading(false);
+      return;
+    }
+
+    if (!selection) {
+      setError("No tickets selected.");
       setLoading(false);
       return;
     }

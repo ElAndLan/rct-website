@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { sendEmail } from "@/lib/mail";
 
@@ -161,7 +161,7 @@ export async function createOrder(
     const { order, performance, seats } = result;
 
     // Invalidate cache for this performance
-    revalidateTag("tickets");
+    revalidateTag("tickets", "max");
 
     const dateStr = new Date(performance.date).toLocaleString();
 

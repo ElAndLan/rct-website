@@ -49,7 +49,7 @@ export async function updateMenuOrder(items: { id: string; order: number }[]) {
   );
   revalidatePath("/", "layout"); // Refresh the frontend menu
   revalidatePath("/admin/menu");
-  revalidateTag("menu-items");
+  revalidateTag("menu-items", "max");
 }
 
 export async function createMenuItem(data: {
@@ -75,12 +75,12 @@ export async function createMenuItem(data: {
   });
   revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
-  revalidateTag("menu-items");
+  revalidateTag("menu-items", "max");
 }
 
 export async function deleteMenuItem(id: string) {
   await prisma.menuItem.delete({ where: { id } });
   revalidatePath("/", "layout");
   revalidatePath("/admin/menu");
-  revalidateTag("menu-items");
+  revalidateTag("menu-items", "max");
 }

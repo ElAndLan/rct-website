@@ -148,7 +148,7 @@ export function SponsorForm({ initialData }: SponsorFormProps) {
                 <Label>Sponsor Logo</Label>
                 <ImagePicker
                   name="image"
-                  defaultImage={initialData?.imageUrl || undefined}
+                  defaultValue={initialData?.imageUrl || undefined}
                 />
               </div>
             </CardContent>
