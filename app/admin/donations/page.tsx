@@ -1,8 +1,30 @@
+"use client";
+
 import { getSiteSettings } from "@/app/actions/settings";
 import { DonationContentForm } from "./donation-content-form";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export default async function DonationContentPage() {
-  const settings = await getSiteSettings();
+export default function DonationContentPage() {
+  const [settings, setSettings] = useState<Record<string, string> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      const data = await getSiteSettings();
+      setSettings(data);
+      setLoading(false);
+    }
+    fetchSettings();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -10,7 +32,7 @@ export default async function DonationContentPage() {
         <h1 className="text-3xl font-bold tracking-tight">Donation Page</h1>
       </div>
       <div className="max-w-xl">
-        <DonationContentForm initialSettings={settings} />
+        <DonationContentForm initialSettings={settings || {}} />
       </div>
     </div>
   );

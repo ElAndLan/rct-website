@@ -41,9 +41,11 @@ interface NewsFormProps {
     imageUrl?: string | null;
     published: boolean;
   };
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function NewsForm({ initialData }: NewsFormProps) {
+export function NewsForm({ initialData, onSuccess, onCancel }: NewsFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -60,13 +62,24 @@ export function NewsForm({ initialData }: NewsFormProps) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
     try {
+      let result;
       if (initialData) {
-        await updateNewsPost(initialData.id, values);
+        result = await updateNewsPost(initialData.id, values);
       } else {
-        await createNewsPost(values);
+        result = await createNewsPost(values);
       }
-      router.push("/admin/announcements");
-      router.refresh();
+
+      if (result.success) {
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          router.push("/admin/announcements");
+          router.refresh();
+        }
+      } else {
+        console.error(result.error);
+        alert(result.error || "Something went wrong.");
+      }
     } catch (error) {
       console.error(error);
       alert("Something went wrong.");
@@ -164,10 +177,25 @@ export function NewsForm({ initialData }: NewsFormProps) {
           )}
         />
 
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {initialData ? "Update Announcement" : "Create Announcement"}
-        </Button>
+        <div className="flex gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              if (onCancel) {
+                onCancel();
+              } else {
+                router.back();
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {initialData ? "Update Announcement" : "Create Announcement"}
+          </Button>
+        </div>
       </form>
     </Form>
   );

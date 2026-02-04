@@ -188,12 +188,13 @@ export async function createFundraiser(formData: FormData) {
     });
   } catch (error) {
     console.error("Failed to create fundraiser:", error);
-    throw new Error("Failed to create fundraiser");
+    return { success: false, error: "Failed to create fundraiser" };
   }
 
   revalidatePath("/admin/fundraisers");
   revalidatePath("/fundraisers");
-  redirect("/admin/fundraisers");
+  revalidateTag("fundraisers", "max");
+  return { success: true };
 }
 
 export async function updateFundraiser(id: string, formData: FormData) {
@@ -254,14 +255,14 @@ export async function updateFundraiser(id: string, formData: FormData) {
     });
   } catch (error) {
     console.error("Failed to update fundraiser:", error);
-    throw new Error("Failed to update fundraiser");
+    return { success: false, error: "Failed to update fundraiser" };
   }
 
   revalidatePath("/admin/fundraisers");
   revalidatePath("/fundraisers");
   revalidatePath(`/fundraisers/[slug]`); // This is tricky without the slug, but next.js handles generic paths
   revalidateTag("fundraisers", "max");
-  redirect("/admin/fundraisers");
+  return { success: true };
 }
 
 export async function deleteFundraiser(id: string) {
@@ -272,8 +273,9 @@ export async function deleteFundraiser(id: string) {
     revalidatePath("/admin/fundraisers");
     revalidatePath("/fundraisers");
     revalidateTag("fundraisers", "max");
+    return { success: true };
   } catch (error) {
     console.error("Failed to delete fundraiser:", error);
-    throw new Error("Failed to delete fundraiser");
+    return { success: false, error: "Failed to delete fundraiser" };
   }
 }

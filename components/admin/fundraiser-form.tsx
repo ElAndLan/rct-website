@@ -19,9 +19,15 @@ import { formatZipCode } from "@/lib/formatters";
 
 interface FundraiserFormProps {
   initialData?: FundraiserWithEvents;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function FundraiserForm({ initialData }: FundraiserFormProps) {
+export function FundraiserForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: FundraiserFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [events, setEvents] = useState<
     { startTime: string; endTime: string }[]
@@ -56,10 +62,20 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
     formData.set("events", JSON.stringify(events));
 
     try {
+      let result;
       if (initialData) {
-        await updateFundraiser(initialData.id, formData);
+        result = await updateFundraiser(initialData.id, formData);
       } else {
-        await createFundraiser(formData);
+        result = await createFundraiser(formData);
+      }
+
+      if (result.success) {
+        if (onSuccess) {
+          onSuccess();
+        }
+      } else {
+        console.error(result.error);
+        setIsSubmitting(false);
       }
     } catch (error) {
       console.error(error);
@@ -253,7 +269,13 @@ export function FundraiserForm({ initialData }: FundraiserFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => window.history.back()}
+          onClick={() => {
+            if (onCancel) {
+              onCancel();
+            } else {
+              window.history.back();
+            }
+          }}
         >
           Cancel
         </Button>

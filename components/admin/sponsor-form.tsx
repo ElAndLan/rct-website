@@ -24,9 +24,15 @@ interface SponsorFormProps {
     isActive: boolean;
     order: number;
   };
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function SponsorForm({ initialData }: SponsorFormProps) {
+export function SponsorForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: SponsorFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phone, setPhone] = useState(initialData?.phone || "");
   const router = useRouter();
@@ -42,7 +48,11 @@ export function SponsorForm({ initialData }: SponsorFormProps) {
       }
 
       if (result.success) {
-        router.push("/admin/sponsors");
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          router.push("/admin/sponsors");
+        }
       } else {
         console.error(result.error);
         setIsSubmitting(false);
@@ -108,7 +118,9 @@ export function SponsorForm({ initialData }: SponsorFormProps) {
                     id="phone"
                     name="phone"
                     value={phone}
-                    onChange={(e) => setPhone(formatPhoneNumber(e.target.value))}
+                    onChange={(e) =>
+                      setPhone(formatPhoneNumber(e.target.value))
+                    }
                     placeholder="(555) 123-4567"
                   />
                 </div>
@@ -160,7 +172,13 @@ export function SponsorForm({ initialData }: SponsorFormProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.back()}
+          onClick={() => {
+            if (onCancel) {
+              onCancel();
+            } else {
+              router.back();
+            }
+          }}
           disabled={isSubmitting}
         >
           Cancel

@@ -1,10 +1,8 @@
+"use client";
+
 import { getMembershipApplications } from "@/app/actions/membership";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { AdminMembershipForm } from "@/components/admin/membership-edit-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -16,18 +14,83 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import Link from "next/link";
-import { Pencil } from "lucide-react";
+import { Pencil, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default async function MembershipsAdminPage() {
-  const result = await getMembershipApplications();
-  const applications = result.applications || [];
+type Applications = Awaited<
+  ReturnType<typeof getMembershipApplications>
+>["applications"];
+
+export default function MembershipsAdminPage() {
+  const [applications, setApplications] = useState<Applications>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<"list" | "edit">("list");
+  const [selectedApp, setSelectedApp] = useState<any>(undefined);
+
+  const fetchApps = async () => {
+    setLoading(true);
+    const result = await getMembershipApplications();
+    if (result.success && result.applications) {
+      setApplications(result.applications);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchApps();
+  }, []);
+
+  const handleEdit = (app: any) => {
+    setSelectedApp(app);
+    setView("edit");
+  };
+
+  const handleBack = () => {
+    setSelectedApp(undefined);
+    setView("list");
+    fetchApps();
+  };
+
+  if (loading && view === "list") {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (view === "edit" && selectedApp) {
+    return (
+      <div className="space-y-6 max-w-4xl">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Edit Membership
+            </h1>
+            <p className="text-muted-foreground">
+              Manage membership details for {selectedApp.firstName}{" "}
+              {selectedApp.lastName}.
+            </p>
+          </div>
+        </div>
+        <AdminMembershipForm
+          application={selectedApp}
+          onSuccess={handleBack}
+          onCancel={() => setView("list")}
+        />
+      </div>
+    );
+  }
+
+  const apps = applications || [];
 
   return (
     <div className="space-y-6 max-w-6xl">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Membership Applications</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Membership Applications
+          </h1>
           <p className="text-muted-foreground">
             View submitted membership forms.
           </p>
@@ -52,7 +115,7 @@ export default async function MembershipsAdminPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {applications.length === 0 ? (
+              {apps.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={7}
@@ -62,10 +125,10 @@ export default async function MembershipsAdminPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                applications.map((app) => (
+                apps.map((app) => (
                   <TableRow key={app.id}>
                     <TableCell>
-                      {format(app.createdAt, "MMM d, yyyy")}
+                      {format(new Date(app.createdAt), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell className="font-medium">
                       {app.firstName} {app.lastName}
@@ -73,33 +136,62 @@ export default async function MembershipsAdminPage() {
                     <TableCell>
                       <Badge variant="outline">{app.type}</Badge>
                       {app.type === "Student" && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                              {app.school} (Gr. {app.grade})
-                          </div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {app.grade ? `${app.grade} Grade` : ""}
+                          {app.school ? ` at ${app.school}` : ""}
+                        </div>
                       )}
                     </TableCell>
                     <TableCell>
                       <div className="font-medium">{app.tier}</div>
                       <div className="text-xs text-muted-foreground">
-                        {app.amount && Number(app.amount) > 0 ? `$${app.amount}` : "Free"}
+                        ${app.amount}
                       </div>
                     </TableCell>
                     <TableCell>{app.email}</TableCell>
-                    <TableCell className="text-xs">
-                        {app.hideAddress && <span className="block text-red-500">No Address</span>}
-                        {app.hidePhone && <span className="block text-red-500">No Phone</span>}
-                        {app.hideEmail && <span className="block text-red-500">No Email</span>}
-                        {!app.hideAddress && !app.hidePhone && !app.hideEmail && (
-                            <span className="text-green-600">Full Listing</span>
+                    <TableCell>
+                      <div className="flex flex-col gap-1">
+                        {app.hideAddress && (
+                          <Badge
+                            variant="secondary"
+                            className="w-fit text-[10px]"
+                          >
+                            Hide Addr
+                          </Badge>
                         )}
+                        {app.hidePhone && (
+                          <Badge
+                            variant="secondary"
+                            className="w-fit text-[10px]"
+                          >
+                            Hide Phone
+                          </Badge>
+                        )}
+                        {app.hideEmail && (
+                          <Badge
+                            variant="secondary"
+                            className="w-fit text-[10px]"
+                          >
+                            Hide Email
+                          </Badge>
+                        )}
+                        {!app.hideAddress &&
+                          !app.hidePhone &&
+                          !app.hideEmail && (
+                            <span className="text-xs text-muted-foreground">
+                              -
+                            </span>
+                          )}
+                      </div>
                     </TableCell>
                     <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link href={`/admin/memberships/${app.id}`}>
-                                <Pencil className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                            </Link>
-                        </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(app)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))

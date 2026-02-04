@@ -1,3 +1,5 @@
+"use client";
+
 import { getVolunteerApplications } from "@/app/actions/volunteer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -24,9 +26,31 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export default async function VolunteerAdminPage() {
-  const applications = await getVolunteerApplications();
+type VolunteerApplication = Awaited<
+  ReturnType<typeof getVolunteerApplications>
+>[number];
+
+export default function VolunteerAdminPage() {
+  const [applications, setApplications] = useState<VolunteerApplication[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getVolunteerApplications().then((data) => {
+      setApplications(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -198,10 +222,8 @@ export default async function VolunteerAdminPage() {
                             </ScrollArea>
 
                             <div className="border-t pt-4 flex justify-between items-center mt-4">
-                              <DeleteVolunteerButton id={app.id} />
-
-                              <div className="space-x-2">
-                                {app.status !== "CONTACTED" && (
+                              <div className="flex gap-2">
+                                {app.status === "NEW" && (
                                   <UpdateStatusButton
                                     id={app.id}
                                     status="CONTACTED"
@@ -216,6 +238,7 @@ export default async function VolunteerAdminPage() {
                                   />
                                 )}
                               </div>
+                              <DeleteVolunteerButton id={app.id} />
                             </div>
                           </DialogContent>
                         </Dialog>

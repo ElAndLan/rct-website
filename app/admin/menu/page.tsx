@@ -1,5 +1,6 @@
+"use client";
 
-import { getMenuItems, createMenuItem } from "@/app/actions/menu"
+import { getMenuItems, createMenuItem, MenuItemWithChildren } from "@/app/actions/menu"
 import { MenuSortableList } from "@/components/admin/menu-editor"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,14 +15,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Plus } from "lucide-react"
-import { redirect } from "next/navigation"
+import { Plus, Loader2 } from "lucide-react"
+import { useEffect, useState } from "react"
 
-export default async function MenuManagerPage() {
-  const menuItems = await getMenuItems()
+export default function MenuManagerPage() {
+  const [menuItems, setMenuItems] = useState<MenuItemWithChildren[]>([])
+  const [loading, setLoading] = useState(true)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
-  async function createItemAction(formData: FormData) {
-    "use server"
+  const fetchMenuItems = async () => {
+    const items = await getMenuItems()
+    setMenuItems(items)
+    setLoading(false)
+  }
+
+  useEffect(() => {
+    fetchMenuItems()
+  }, [])
+
+  async function handleCreate(formData: FormData) {
     const label = formData.get("label") as string
     const path = formData.get("path") as string
     const parentId = formData.get("parentId") as string
@@ -33,7 +45,17 @@ export default async function MenuManagerPage() {
         path,
         parentId: parentId === "none" ? undefined : parentId
     })
-    redirect("/admin/menu")
+    
+    setDialogOpen(false)
+    await fetchMenuItems()
+  }
+
+  if (loading) {
+      return (
+          <div className="flex justify-center items-center py-24">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+      )
   }
 
   return (
@@ -44,7 +66,7 @@ export default async function MenuManagerPage() {
                 <p className="text-muted-foreground">Manage the navigation bar structure.</p>
             </div>
             
-            <Dialog>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                     <Button><Plus className="mr-2 h-4 w-4"/> Add Item</Button>
                 </DialogTrigger>
@@ -55,7 +77,7 @@ export default async function MenuManagerPage() {
                             Create a new link for the navigation bar.
                         </DialogDescription>
                     </DialogHeader>
-                    <form action={createItemAction}>
+                    <form action={handleCreate}>
                         <div className="grid gap-4 py-4">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="label" className="text-right">Label</Label>

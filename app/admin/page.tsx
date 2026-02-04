@@ -1,12 +1,46 @@
-import { Suspense } from "react";
-import { getAdminDashboardData } from "@/app/actions/admin-dashboard";
+"use client";
+
+import {
+  getAdminDashboardData,
+  DashboardMetrics,
+  DashboardMessage,
+  DashboardActivity,
+} from "@/app/actions/admin-dashboard";
 import { DashboardMailbox } from "@/components/admin/dashboard-mailbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Ticket, Users, Mail, Activity } from "lucide-react";
+import { Ticket, Users, Mail, Activity, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { useEffect, useState } from "react";
 
-export default async function AdminDashboard() {
-  const { messages, activity, metrics } = await getAdminDashboardData();
+export default function AdminDashboard() {
+  const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [messages, setMessages] = useState<DashboardMessage[]>([]);
+  const [activity, setActivity] = useState<DashboardActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const data = await getAdminDashboardData();
+        setMetrics(data.metrics);
+        setMessages(data.messages);
+        setActivity(data.activity);
+      } catch (error) {
+        console.error("Failed to fetch dashboard data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  if (loading || !metrics) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -1,3 +1,5 @@
+"use client";
+
 import { getAllOrders } from "@/app/actions/admin-orders";
 import {
   Table,
@@ -9,14 +11,39 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export default async function AdminOrdersPage() {
-  const { orders, error } = await getAllOrders();
+type Orders = Awaited<ReturnType<typeof getAllOrders>>["orders"];
+
+export default function AdminOrdersPage() {
+  const [orders, setOrders] = useState<Orders | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getAllOrders().then((result) => {
+      if (result.success && result.orders) {
+        setOrders(result.orders);
+      } else {
+        setError(result.error || "Failed to fetch orders");
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (error || !orders) {
     return (
       <div className="p-8 text-red-500">
-        Failed to load orders. Please try again later.
+        {error || "Failed to load orders. Please try again later."}
       </div>
     );
   }
@@ -118,7 +145,7 @@ export default async function AdminOrdersPage() {
               {orders.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={6}
+                    colSpan={7}
                     className="text-center py-8 text-muted-foreground"
                   >
                     No orders found.

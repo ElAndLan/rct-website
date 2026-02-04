@@ -121,7 +121,7 @@ export async function upsertAudition(
         isActive: data.isActive,
       },
     });
-    revalidatePath(`/admin/auditions/${showId}`);
+    // We revalidate everything since we are moving to client components
     revalidateTag("auditions", "max");
     return { success: true, audition };
   } catch (error) {
@@ -173,12 +173,6 @@ export async function generateAuditionSlots(
       });
     }
 
-    revalidatePath(`/admin/auditions`);
-    // We can't easily revalidate the specific show page without passing showId,
-    // but usually the auditionId is not the showId.
-    // However, the admin page is /admin/auditions/[showId].
-    // We can fetch the showId from auditionId if we really need to be precise,
-    // or just revalidate the layout.
     revalidateTag("auditions", "max");
 
     return { success: true, count: slotsData.length };
@@ -193,7 +187,7 @@ export async function deleteAuditionSlot(slotId: string) {
     await prisma.auditionSlot.delete({
       where: { id: slotId },
     });
-    revalidatePath("/admin/auditions");
+    revalidateTag("auditions", "max");
     return { success: true };
   } catch (error) {
     console.error("Error deleting slot:", error);
@@ -203,132 +197,108 @@ export async function deleteAuditionSlot(slotId: string) {
 
 export async function cancelAuditionBooking(attendeeId: string) {
   try {
-    const attendee = await prisma.auditionAttendee.delete({
-      where: { id: attendeeId },
+    await prisma.auditionAttendee.delete({
+        where: { id: attendeeId }
+    });
+    revalidateTag("auditions", "max");
+    return { success: true };
+  } catch (error) {
+      console.error("Error cancelling booking:", error);
+      return { success: false, error: "Failed to cancel booking" };
+  }
+}
+
+export async function getAdminAuditionShows() {
+  try {
+    return await prisma.show.findMany({
       include: {
-        slot: {
+        audition: {
           include: {
-            audition: {
+            _count: {
+              select: { slots: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Failed to fetch admin audition shows:", error);
+    return [];
+  }
+}
+
+export async function getAdminAuditionDetails(showId: string) {
+  try {
+    return await prisma.show.findUnique({
+      where: { id: showId },
+      include: {
+        audition: {
+          include: {
+            slots: {
               include: {
-                show: true,
+                attendees: true,
+                _count: {
+                  select: { attendees: true },
+                },
+              },
+              orderBy: {
+                startTime: 'asc',
               },
             },
           },
         },
       },
     });
-
-    // Revalidate paths
-    revalidatePath("/admin/auditions");
-    if (attendee.slot?.audition?.show?.slug) {
-      revalidatePath(`/auditions/${attendee.slot.audition.show.slug}`);
-    }
-    revalidateTag("auditions", "max");
-
-    return { success: true, attendee };
   } catch (error) {
-    console.error("Error canceling booking:", error);
-    return { success: false, error: "Failed to cancel booking" };
+    console.error("Failed to fetch admin audition details:", error);
+    return null;
   }
 }
 
-// --- Public Actions ---
+export type AdminAuditionShow = Awaited<ReturnType<typeof getAdminAuditionShows>>[number];
+export type AdminAuditionDetails = NonNullable<Awaited<ReturnType<typeof getAdminAuditionDetails>>>;
 
 export async function bookAuditionSlot(data: z.infer<typeof BookingSchema>) {
   try {
-    const validated = BookingSchema.parse(data);
-
-    // Use transaction to ensure capacity integrity
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Get Slot with current attendees count
-      const slot = await tx.auditionSlot.findUnique({
-        where: { id: validated.slotId },
-        include: {
-          attendees: true,
-          audition: {
-            include: {
-              show: true,
-            },
-          },
-        },
-      });
-
-      if (!slot) {
-        throw new Error("Audition slot not found");
-      }
-
-      if (slot.attendees.length >= slot.capacity) {
-        throw new Error("This time slot is already full");
-      }
-
-      // 2. Create Attendee
-      const attendee = await tx.auditionAttendee.create({
-        data: {
-          slotId: validated.slotId,
-          fullName: validated.fullName,
-          email: validated.email,
-          phoneNumber: validated.phoneNumber,
-          desiredRole: validated.desiredRole,
-        },
-      });
-
-      return { attendee, slot };
-    });
-
-    const { attendee, slot } = result;
-    const show = slot.audition.show;
-
-    // 3. Send Emails (Fire and forget, or await?)
-    // Best to await to ensure delivery, or at least log errors.
-
-    // Email to Applicant
-    if (attendee.email) {
-      await sendEmail({
-        to: attendee.email,
-        subject: `Audition Confirmed: ${show.title}`,
-        html: `
-          <h1>Audition Confirmation</h1>
-          <p>Hi ${attendee.fullName},</p>
-          <p>You are confirmed for an audition for <strong>${show.title}</strong>.</p>
-          <p><strong>Time:</strong> ${format(slot.startTime, "MMMM do, yyyy 'at' h:mm a")}</p>
-          <p><strong>Location:</strong> ${slot.audition.location || "TBD"}</p>
-          ${slot.audition.description ? `<p><strong>Notes:</strong> ${slot.audition.description}</p>` : ""}
-          <p>Good luck!</p>
-        `,
-      });
+    const result = BookingSchema.safeParse(data);
+    if (!result.success) {
+      return { success: false, error: "Invalid data" };
     }
 
-    // Email to Theatre Admin
-    const theatreEmail = process.env.THEATRE_EMAIL || "admin@example.com";
-    await sendEmail({
-      to: theatreEmail,
-      subject: `New Audition Signup: ${show.title}`,
-      html: `
-        <h2>New Audition Signup</h2>
-        <p><strong>Show:</strong> ${show.title}</p>
-        <p><strong>Name:</strong> ${attendee.fullName}</p>
-        <p><strong>Role:</strong> ${attendee.desiredRole || "N/A"}</p>
-        <p><strong>Time:</strong> ${format(slot.startTime, "MMMM do, yyyy 'at' h:mm a")}</p>
-        <p><strong>Contact:</strong> ${attendee.email || ""} ${attendee.phoneNumber || ""}</p>
-      `,
+    const { slotId, fullName, email, phoneNumber, desiredRole } = result.data;
+
+    const slot = await prisma.auditionSlot.findUnique({
+      where: { id: slotId },
+      include: {
+        _count: {
+          select: { attendees: true },
+        },
+      },
     });
 
-    revalidatePath(`/auditions/${show.slug}`);
-    revalidatePath(`/admin/auditions/${show.id}`);
+    if (!slot) {
+      return { success: false, error: "Slot not found" };
+    }
 
-    return { success: true };
+    if (slot._count.attendees >= slot.capacity) {
+      return { success: false, error: "Slot is full" };
+    }
+
+    const attendee = await prisma.auditionAttendee.create({
+      data: {
+        slotId,
+        fullName,
+        email: email || null,
+        phoneNumber: phoneNumber || null,
+        desiredRole: desiredRole || null,
+      },
+    });
+
+    revalidateTag("auditions", "max");
+    return { success: true, attendee };
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      const firstError = error.issues[0];
-      return {
-        success: false,
-        error: firstError?.message || "Invalid input data",
-      };
-    }
-    console.error("Error booking audition:", error);
-    return {
-      success: false,
-      error: (error as Error).message || "Failed to book audition",
-    };
+    console.error("Error booking slot:", error);
+    return { success: false, error: "Failed to book slot" };
   }
 }

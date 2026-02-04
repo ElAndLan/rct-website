@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { createUser, deleteUser } from "@/app/actions/users"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { createUser, deleteUser } from "@/app/actions/users";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -19,54 +19,59 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Plus, Trash2 } from "lucide-react"
-import { useRouter } from "next/navigation"
+} from "@/components/ui/select";
+import { Plus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type User = {
-  id: string
-  name: string | null
-  email: string | null
-  role: string
-  createdAt: Date
-}
+  id: string;
+  name: string | null;
+  email: string | null;
+  role: string;
+  createdAt: Date;
+};
 
-export function UserList({ initialUsers }: { initialUsers: User[] }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const router = useRouter()
+export function UserList({
+  users,
+  onRefresh,
+}: {
+  users: User[];
+  onRefresh: () => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit(formData: FormData) {
-    setIsSubmitting(true)
-    const result = await createUser(formData)
-    setIsSubmitting(false)
-    
+    setIsSubmitting(true);
+    const result = await createUser(formData);
+    setIsSubmitting(false);
+
     if (result.success) {
-      setIsOpen(false)
-      router.refresh()
-      alert("User created successfully! Check server logs for mock email.")
+      setIsOpen(false);
+      onRefresh();
+      alert("User created successfully! Check server logs for mock email.");
     } else {
-      alert(result.error)
+      alert(result.error);
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this user?")) return
-    
-    const result = await deleteUser(id)
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    const result = await deleteUser(id);
     if (result.success) {
-      router.refresh()
+      onRefresh();
     } else {
-      alert("Failed to delete user")
+      alert("Failed to delete user");
     }
   }
 
@@ -83,7 +88,8 @@ export function UserList({ initialUsers }: { initialUsers: User[] }) {
             <DialogHeader>
               <DialogTitle>Create New User</DialogTitle>
               <DialogDescription>
-                Enter the details below. A welcome email with login credentials will be sent.
+                Enter the details below. A welcome email with login credentials
+                will be sent.
               </DialogDescription>
             </DialogHeader>
             <form action={onSubmit} className="space-y-4">
@@ -117,24 +123,26 @@ export function UserList({ initialUsers }: { initialUsers: User[] }) {
         </Dialog>
       </div>
 
-      <div className="rounded-md border">
+      <div className="border rounded-md">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Created At</TableHead>
+              <TableHead>Joined</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {initialUsers.map((user) => (
+            {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.role}</TableCell>
-                <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                <TableCell>
+                  {new Date(user.createdAt).toLocaleDateString()}
+                </TableCell>
                 <TableCell className="text-right">
                   <Button
                     variant="ghost"
@@ -147,9 +155,12 @@ export function UserList({ initialUsers }: { initialUsers: User[] }) {
                 </TableCell>
               </TableRow>
             ))}
-            {initialUsers.length === 0 && (
+            {users.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-4 text-muted-foreground"
+                >
                   No users found.
                 </TableCell>
               </TableRow>
@@ -158,5 +169,5 @@ export function UserList({ initialUsers }: { initialUsers: User[] }) {
         </Table>
       </div>
     </div>
-  )
+  );
 }

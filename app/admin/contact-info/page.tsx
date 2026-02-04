@@ -1,8 +1,30 @@
+"use client";
+
 import { getSiteSettings } from "@/app/actions/settings";
 import { ContactInfoForm } from "./contact-info-form";
+import { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export default async function ContactInfoPage() {
-  const settings = await getSiteSettings();
+export default function ContactInfoPage() {
+  const [settings, setSettings] = useState<Record<string, string> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchSettings() {
+      const data = await getSiteSettings();
+      setSettings(data);
+      setLoading(false);
+    }
+    fetchSettings();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -12,7 +34,7 @@ export default async function ContactInfoPage() {
         </h1>
       </div>
       <div className="max-w-xl">
-        <ContactInfoForm initialSettings={settings} />
+        <ContactInfoForm initialSettings={settings || {}} />
       </div>
     </div>
   );

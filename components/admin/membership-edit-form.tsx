@@ -62,9 +62,15 @@ type MembershipApplication = {
 
 interface AdminMembershipFormProps {
   application: MembershipApplication;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
+export function AdminMembershipForm({
+  application,
+  onSuccess,
+  onCancel,
+}: AdminMembershipFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -132,7 +138,11 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
 
     if (result.success) {
       toast.success("Application updated successfully");
-      router.refresh();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.refresh();
+      }
     } else {
       toast.error(result.error || "Failed to update application");
     }
@@ -144,7 +154,11 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
     const result = await deleteMembershipApplication(application.id);
     if (result.success) {
       toast.success("Application deleted");
-      router.push("/admin/memberships");
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/admin/memberships");
+      }
     } else {
       toast.error(result.error || "Failed to delete");
       setIsDeleting(false);
@@ -156,7 +170,13 @@ export function AdminMembershipForm({ application }: AdminMembershipFormProps) {
       <div className="flex items-center justify-between">
         <Button
           variant="outline"
-          onClick={() => router.push("/admin/memberships")}
+          onClick={() => {
+            if (onCancel) {
+              onCancel();
+            } else {
+              router.push("/admin/memberships");
+            }
+          }}
         >
           <ArrowLeft className="h-4 w-4 mr-2" /> Back to List
         </Button>

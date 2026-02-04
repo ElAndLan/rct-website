@@ -1,4 +1,12 @@
-import prisma from "@/lib/prisma";
+"use client";
+
+import { 
+    getAdminAuditionShows, 
+    getAdminAuditionDetails, 
+    AdminAuditionShow, 
+    AdminAuditionDetails 
+} from "@/app/actions/audition";
+import { AuditionManager } from "@/components/admin/audition-manager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -10,24 +18,79 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Eye } from "lucide-react";
+import { Calendar, Eye, Loader2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { useEffect, useState } from "react";
 
-export default async function AuditionsIndexPage() {
-  // Fetch shows with audition data
-  const shows = await prisma.show.findMany({
-    include: {
-      audition: {
-        include: {
-          _count: {
-            select: { slots: true },
-          },
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+export default function AuditionsIndexPage() {
+  const [shows, setShows] = useState<AdminAuditionShow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<"list" | "manage">("list");
+  const [selectedShowDetails, setSelectedShowDetails] = useState<AdminAuditionDetails | null>(null);
+
+  const fetchShows = async () => {
+    const data = await getAdminAuditionShows();
+    setShows(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchShows();
+  }, []);
+
+  const handleManage = async (showId: string) => {
+      setLoading(true);
+      const details = await getAdminAuditionDetails(showId);
+      if (details) {
+          setSelectedShowDetails(details);
+          setView("manage");
+      }
+      setLoading(false);
+  }
+
+  const handleBack = () => {
+      setView("list");
+      setSelectedShowDetails(null);
+      fetchShows(); // Refresh list to update counts/statuses
+  }
+
+  if (loading && view === "list") {
+      return (
+          <div className="flex justify-center items-center py-24">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+      );
+  }
+
+  if (view === "manage" && selectedShowDetails) {
+      return (
+        <div className="space-y-6">
+            <div className="flex items-center gap-4">
+                <Button variant="outline" size="icon" onClick={handleBack}>
+                    <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                    <h1 className="text-3xl font-bold flex items-center gap-3">
+                        Manage Auditions: {selectedShowDetails.title}
+                    </h1>
+                    <p className="text-muted-foreground text-sm mt-1">
+                        Configure schedule and capacity for this production.
+                    </p>
+                </div>
+                <Badge variant="outline" className="ml-auto">
+                    {selectedShowDetails.status}
+                </Badge>
+            </div>
+
+            <AuditionManager
+                showId={selectedShowDetails.id}
+                initialAudition={selectedShowDetails.audition}
+                slots={selectedShowDetails.audition?.slots || []}
+            />
+        </div>
+      );
+  }
 
   return (
     <div className="space-y-6">
@@ -89,12 +152,14 @@ export default async function AuditionsIndexPage() {
                       </TableCell>
                       <TableCell>{show.audition?._count.slots || 0}</TableCell>
                       <TableCell className="text-right">
-                        <Link href={`/admin/auditions/${show.id}`}>
-                          <Button variant="ghost" size="sm">
+                        <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleManage(show.id)}
+                        >
                             <Calendar className="w-4 h-4 mr-2" />
                             {hasAudition ? "Manage" : "Setup"}
-                          </Button>
-                        </Link>
+                        </Button>
                       </TableCell>
                     </TableRow>
                   );
