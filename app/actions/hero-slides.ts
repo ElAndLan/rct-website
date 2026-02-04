@@ -27,7 +27,6 @@ export const getHeroSlides = unstable_cache(
       }
 
       // Check if heroSlide model exists on prisma instance
-      // @ts-expect-error - Checking for model existence
       if (!prisma.heroSlide) {
         // Try to re-instantiate prisma if model is missing (hot reload issue?)
         // This is a failsafe for development environment
@@ -87,7 +86,7 @@ export async function createHeroSlide(data: HeroSlideData) {
     });
 
     revalidatePath("/");
-    revalidateTag("hero-slides");
+    revalidateTag("hero-slides", "max");
     return { success: true, slide };
   } catch (error) {
     console.error("Failed to create hero slide:", error);
@@ -129,7 +128,7 @@ export async function deleteHeroSlide(id: string) {
     });
 
     revalidatePath("/");
-    revalidateTag("hero-slides");
+    revalidateTag("hero-slides", "max");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete hero slide:", error);

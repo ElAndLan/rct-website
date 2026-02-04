@@ -319,7 +319,7 @@ export async function bookAuditionSlot(data: z.infer<typeof BookingSchema>) {
     return { success: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const firstError = error.errors[0];
+      const firstError = error.issues[0];
       return {
         success: false,
         error: firstError?.message || "Invalid input data",
