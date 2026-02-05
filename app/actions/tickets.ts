@@ -176,7 +176,7 @@ export async function createOrder(
     const { order, performance, seats } = result;
 
     // Invalidate cache for this performance
-    revalidateTag("tickets", "max");
+    revalidateTag("tickets");
 
     const dateStr = new Date(performance.date).toLocaleString();
 

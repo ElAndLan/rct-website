@@ -193,7 +193,7 @@ export async function createFundraiser(formData: FormData) {
 
   revalidatePath("/admin/fundraisers");
   revalidatePath("/fundraisers");
-  revalidateTag("fundraisers", "max");
+  revalidateTag("fundraisers");
   return { success: true };
 }
 
@@ -261,7 +261,7 @@ export async function updateFundraiser(id: string, formData: FormData) {
   revalidatePath("/admin/fundraisers");
   revalidatePath("/fundraisers");
   revalidatePath(`/fundraisers/[slug]`); // This is tricky without the slug, but next.js handles generic paths
-  revalidateTag("fundraisers", "max");
+  revalidateTag("fundraisers");
   return { success: true };
 }
 
@@ -272,7 +272,7 @@ export async function deleteFundraiser(id: string) {
     });
     revalidatePath("/admin/fundraisers");
     revalidatePath("/fundraisers");
-    revalidateTag("fundraisers", "max");
+    revalidateTag("fundraisers");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete fundraiser:", error);

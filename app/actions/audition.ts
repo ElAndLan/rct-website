@@ -122,7 +122,7 @@ export async function upsertAudition(
       },
     });
     // We revalidate everything since we are moving to client components
-    revalidateTag("auditions", "max");
+    revalidateTag("auditions");
     return { success: true, audition };
   } catch (error) {
     console.error("Error upserting audition:", error);
@@ -173,7 +173,7 @@ export async function generateAuditionSlots(
       });
     }
 
-    revalidateTag("auditions", "max");
+    revalidateTag("auditions");
 
     return { success: true, count: slotsData.length };
   } catch (error) {
@@ -187,7 +187,7 @@ export async function deleteAuditionSlot(slotId: string) {
     await prisma.auditionSlot.delete({
       where: { id: slotId },
     });
-    revalidateTag("auditions", "max");
+    revalidateTag("auditions");
     return { success: true };
   } catch (error) {
     console.error("Error deleting slot:", error);
@@ -200,7 +200,7 @@ export async function cancelAuditionBooking(attendeeId: string) {
     await prisma.auditionAttendee.delete({
         where: { id: attendeeId }
     });
-    revalidateTag("auditions", "max");
+    revalidateTag("auditions");
     return { success: true };
   } catch (error) {
       console.error("Error cancelling booking:", error);
@@ -295,7 +295,7 @@ export async function bookAuditionSlot(data: z.infer<typeof BookingSchema>) {
       },
     });
 
-    revalidateTag("auditions", "max");
+    revalidateTag("auditions");
     return { success: true, attendee };
   } catch (error) {
     console.error("Error booking slot:", error);

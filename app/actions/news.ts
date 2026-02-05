@@ -121,7 +121,7 @@ export async function deleteNewsPost(id: string) {
 
     revalidatePath("/announcements");
     revalidatePath("/admin/announcements");
-    revalidateTag("news", "max");
+    revalidateTag("news");
     return { success: true };
   } catch (error) {
     console.error("Failed to delete news post:", error);

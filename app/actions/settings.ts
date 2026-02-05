@@ -151,7 +151,7 @@ export async function updateSiteSettings(formData: FormData) {
     revalidatePath("/");
     revalidatePath("/admin/settings");
     revalidatePath("/donate");
-    revalidateTag("site-settings", "max");
+    revalidateTag("site-settings");
     return { success: true };
   } catch (error) {
     console.error("Failed to update settings:", error);

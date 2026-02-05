@@ -13,9 +13,9 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function FundraiserDetailPage({ params }: PageProps) {

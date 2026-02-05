@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   const show = await getShowBySlug(slug);
@@ -30,7 +30,7 @@ export async function generateMetadata({
 export default async function ShowDetailPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
   const show = await getShowBySlug(slug);

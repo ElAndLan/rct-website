@@ -101,7 +101,7 @@ export async function createPage(formData: FormData) {
   }
 
   revalidatePath("/admin/pages");
-  revalidateTag("pages", "max");
+  revalidateTag("pages");
   redirect("/admin/pages");
 }
 
@@ -148,7 +148,7 @@ export async function updatePage(id: string, formData: FormData) {
 
   revalidatePath("/admin/pages");
   revalidatePath(`/${slug}`); // Revalidate the public page
-  revalidateTag("pages", "max");
+  revalidateTag("pages");
   redirect("/admin/pages");
 }
 
@@ -163,7 +163,7 @@ export async function deletePage(id: string) {
   }
 
   revalidatePath("/admin/pages");
-  revalidateTag("pages", "max");
+  revalidateTag("pages");
   return { success: true };
 }
 
@@ -180,7 +180,7 @@ export async function togglePageStatus(id: string, isPublished: boolean) {
 
     revalidatePath("/admin/pages");
     revalidatePath(`/${page.slug}`);
-    revalidateTag("pages", "max");
+    revalidateTag("pages");
     return { success: true };
   } catch (error) {
     console.error("Error updating page status:", error);

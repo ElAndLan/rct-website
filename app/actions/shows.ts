@@ -154,7 +154,7 @@ export async function createShow(formData: FormData) {
   });
 
   revalidatePath("/admin/shows");
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
   redirect("/admin/shows");
 }
 
@@ -198,7 +198,7 @@ export async function updateShow(id: string, formData: FormData) {
   revalidatePath(`/admin/shows/${id}`);
   revalidatePath("/admin/shows");
   revalidatePath(`/shows`); // Revalidate public pages
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function addPerformance(showId: string, formData: FormData) {
@@ -215,13 +215,13 @@ export async function addPerformance(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function deletePerformance(performanceId: string, showId: string) {
   await prisma.showPerformance.delete({ where: { id: performanceId } });
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function updateTicketPrice(showId: string, formData: FormData) {
@@ -233,13 +233,13 @@ export async function updateTicketPrice(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function deleteShow(id: string) {
   await prisma.show.delete({ where: { id } });
   revalidatePath("/admin/shows");
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 // --- Photo Management ---
@@ -302,7 +302,7 @@ export async function uploadShowPhoto(showId: string, formData: FormData) {
     });
 
     revalidatePath(`/admin/shows/${showId}`);
-    revalidateTag("shows", "max");
+    revalidateTag("shows");
     return { success: true };
   } catch (error) {
     console.error("Upload error:", error);
@@ -314,7 +314,7 @@ export async function deleteShowPhoto(photoId: string, showId: string) {
   // Ideally delete file from disk too, but for now just DB
   await prisma.showPhoto.delete({ where: { id: photoId } });
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function updateShowMainImage(showId: string, formData: FormData) {
@@ -341,7 +341,7 @@ export async function updateShowMainImage(showId: string, formData: FormData) {
       data: { imageUrl: url },
     });
     revalidatePath(`/admin/shows/${showId}`);
-    revalidateTag("shows", "max");
+    revalidateTag("shows");
     return { success: true };
   } catch (error) {
     return { error: "Upload failed" };
@@ -383,7 +383,7 @@ export async function addCastMember(showId: string, formData: FormData) {
   });
 
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function updateCastMember(
@@ -418,11 +418,11 @@ export async function updateCastMember(
   });
 
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
 
 export async function deleteCastMember(memberId: string, showId: string) {
   await prisma.castMember.delete({ where: { id: memberId } });
   revalidatePath(`/admin/shows/${showId}`);
-  revalidateTag("shows", "max");
+  revalidateTag("shows");
 }
